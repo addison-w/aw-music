@@ -1,14 +1,23 @@
 <template>
     <div class="artist-wrap">
-        <scroll class="artist-content" :data="artistList">
+        <scroll ref="scroll" class="artist-content" :data="artistList" :listenScroll="true" @scroll="scroll">
             <div>
-                <div v-for="(grouped, index) in artistList" :key="index">
+                <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
                     <div class="grouped-flag">{{ grouped.flag }}</div>
                     <div v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
                         <img :src="artist.imgUrl" alt="">
                         <span>{{ artist.name }}</span>
                     </div>
                 </div>
+            </div>
+            <div class="index-list">
+                <ul>
+                    <li v-for="(letter, index) in indexList" :key="letter" :data-index="index"
+                        @touchstart="onIndexStart" @touchmove.stop.prevent="onIndexMove"
+                        :class="{'current': currentIndex === index}">
+                        {{ letter }}
+                    </li>
+                </ul>
             </div>
         </scroll>
     </div>
@@ -24,7 +33,11 @@ export default {
     data () {
         return {
             artistList: [],
-            indexList: []
+            indexList: [],
+            touch: {},
+            listHeight: [0],
+            scrollY: -1,
+            currentIndex: 0
         }
     },
     components: {
@@ -34,6 +47,33 @@ export default {
         this._getArtistList()
     },
     methods: {
+        onIndexStart (e) {
+            let touchIndex = e.target.getAttribute('data-index')
+            this.$refs.scroll.scrollToElement(this.$refs.groupedList[touchIndex])
+
+            this.touch.y1 = e.touches[0].pageY // mark first touch Y position
+            this.touch.touchIndex1 = touchIndex // mark fist touch index
+            this.scrollY = -this.listHeight[touchIndex]
+        },
+        onIndexMove (e) {
+            this.touch.y2 = e.touches[0].pageY // mark moving Y position
+            let delta = ~~((this.touch.y2 - this.touch.y1) / 20) // 20px is the height of each letter
+            
+            let newIndex = this.touch.touchIndex1 * 1 + delta; // because touchIndex1 is String, use * 1 convert type to number
+            this.$refs.scroll.scrollToElement(this.$refs.groupedList[newIndex])
+            this.scrollY = -this.listHeight[newIndex]
+        },
+        _calculateScrollListHeight () {
+            let height = 0
+            for (let grouped of this.$refs.groupedList) {
+                height += grouped.clientHeight
+                this.listHeight.push(height)
+            }
+            console.log(this.listHeight)
+        },
+        scroll (pos) {
+            this.scrollY = pos.y
+        },
         _getArtistList () {
             getArtistList()
             .then(res => {
@@ -71,6 +111,26 @@ export default {
             })
             .catch(err => console.log(err))
         }
+    },
+    watch: {
+        artistList () {
+            setTimeout(() => {
+                this._calculateScrollListHeight()
+            }, 20)
+        },
+        scrollY (newY) {
+            if(newY > 0) {
+                this.currentIndex = 0
+                return
+            }
+
+            this.listHeight.forEach((groupY, index) => {
+                if (-newY >= groupY && -newY < this.listHeight[++index]) {
+                    this.currentIndex = index - 1
+                    return
+                }
+            })
+        }
     }
 }
 </script>
@@ -88,7 +148,7 @@ export default {
             overflow: hidden;
             .grouped-flag {
                 background: #F0F0F0;
-                padding: 5px 10px;
+                padding: 5px 12px;
                 font-size: 0.8rem;
             }
             .artist-row {
@@ -104,6 +164,25 @@ export default {
                 }
                 span {
                     margin-left: 20px;
+                    font-size: 0.8rem;
+                }
+            }
+            .index-list {
+                display: flex;
+                flex-flow: column nowrap;
+                position: absolute;
+                right: 6px;
+                top: 50%;
+                transform: translateY(-50%);
+                line-height: 1.3rem;
+                font-size: 12px;
+                text-align:center;
+                background: #F5F5F5;
+                padding: 5px;
+                border-radius: 6px;
+                z-index: 50;
+                .current {
+                    color: red;
                 }
             }
         }
