@@ -7,7 +7,7 @@ export function getRecommendSlides () {
         .then(res => {
             resolve(res.data)
         })
-        .catch(err => console.log(err))
+        .catch(err => reject(err))
     })
 }
 
@@ -17,6 +17,6 @@ export function getRecommendSongLists () {
         .then(res => {
             resolve(res.data)
         })
-        .catch(err => console.log(err))
+        .catch(err => reject(err))
     })
 }
