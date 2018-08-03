@@ -118,7 +118,7 @@ export default {
             })
             .catch(err => console.log(err))
         },
-        ...mapMutations (['SET_ARTIST'])
+        ...mapMutations(['SET_ARTIST'])
     },
     watch: {
         artistList () {

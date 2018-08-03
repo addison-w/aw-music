@@ -9,13 +9,15 @@
 import {mapGetters} from 'vuex'
 import {getArtistDetail} from 'api/artist'
 import {SUCC_CODE} from 'api/config'
+import {createSong} from 'model/Song'
+
 export default {
     data () {
         return {
             songs: []
         }
     },
-    created() {
+    created () {
         this._getArtistDetails()
     },
     computed: {
@@ -32,13 +34,16 @@ export default {
             getArtistDetail(this.GET_ARTIST.id)
             .then(res => {
                 if (res.code === SUCC_CODE) {
-
+                    this._normalizeSong(res.hotSongs)
                 }
+                console.log(this.songs)
             })
             .catch(err => console.log(err))
         },
         _normalizeSong (tracks) {
-            
+            tracks.forEach(track => {
+                this.songs.push(createSong(track))
+            })
         }
     }
 }
