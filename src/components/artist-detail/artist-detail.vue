@@ -1,7 +1,6 @@
 <template>
     <transition name="slide">
-        <div class="artist-detail-wrap">
-        </div>
+        <music-list :bgImage="GET_ARTIST.imgUrl" :title="GET_ARTIST.name" ></music-list>
     </transition>
 </template>
 
@@ -10,12 +9,16 @@ import {mapGetters} from 'vuex'
 import {getArtistDetail} from 'api/artist'
 import {SUCC_CODE} from 'api/config'
 import {createSong} from 'model/Song'
+import MusicList from 'components/music-list/music-list'
 
 export default {
     data () {
         return {
             songs: []
         }
+    },
+    components: {
+        MusicList
     },
     created () {
         this._getArtistDetails()
@@ -55,14 +58,5 @@ export default {
     }
     .slide-enter,.slide-leave-to {
         transform: translate3d(100%, 0, 0)
-    }
-    .artist-detail-wrap {
-        position: fixed;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: white;
     }
 </style>
