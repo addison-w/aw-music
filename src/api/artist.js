@@ -10,3 +10,13 @@ export function getArtistList () {
         .catch(err => reject(err))
     })
 }
+
+export function getArtistDetail (artistId) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/artists?id=${artistId}`)
+        .then(res => {
+            resolve(res.data)
+        })
+        .catch(err => reject(err))
+    })
+}

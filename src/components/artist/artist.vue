@@ -4,7 +4,7 @@
             <div>
                 <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
                     <div class="grouped-flag">{{ grouped.flag }}</div>
-                    <div v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
+                    <div @click="selectArtist(artist)" v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
                         <img :src="artist.imgUrl" alt="">
                         <span>{{ artist.name }}</span>
                     </div>
@@ -20,6 +20,7 @@
                 </ul>
             </div>
         </scroll>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -28,6 +29,7 @@ import {getArtistList} from 'api/artist'
 import {SUCC_CODE} from 'api/config'
 import pinyin from 'tiny-pinyin'
 import Scroll from 'base/scroll'
+import {mapMutations} from 'vuex'
 
 export default {
     data () {
@@ -58,8 +60,8 @@ export default {
         onIndexMove (e) {
             this.touch.y2 = e.touches[0].pageY // mark moving Y position
             let delta = ~~((this.touch.y2 - this.touch.y1) / 20) // 20px is the height of each letter
-            
-            let newIndex = this.touch.touchIndex1 * 1 + delta; // because touchIndex1 is String, use * 1 convert type to number
+
+            let newIndex = this.touch.touchIndex1 * 1 + delta // because touchIndex1 is String, use * 1 convert type to number
             this.$refs.scroll.scrollToElement(this.$refs.groupedList[newIndex])
             this.scrollY = -this.listHeight[newIndex]
         },
@@ -69,10 +71,15 @@ export default {
                 height += grouped.clientHeight
                 this.listHeight.push(height)
             }
-            console.log(this.listHeight)
         },
         scroll (pos) {
             this.scrollY = pos.y
+        },
+        selectArtist (artist) {
+            this.$router.push({
+                path: `/artist/${artist.id}`
+            })
+            this.SET_ARTIST(artist)
         },
         _getArtistList () {
             getArtistList()
@@ -110,7 +117,8 @@ export default {
                 }
             })
             .catch(err => console.log(err))
-        }
+        },
+        ...mapMutations (['SET_ARTIST'])
     },
     watch: {
         artistList () {
@@ -119,15 +127,14 @@ export default {
             }, 20)
         },
         scrollY (newY) {
-            if(newY > 0) {
+            if (newY > 0) { // if scroll above top, set currentIndex to 0
                 this.currentIndex = 0
                 return
             }
 
             this.listHeight.forEach((groupY, index) => {
-                if (-newY >= groupY && -newY < this.listHeight[++index]) {
+                if (-newY >= groupY && -newY < this.listHeight[++index]) { // if scrollY between 2 groups
                     this.currentIndex = index - 1
-                    return
                 }
             })
         }
@@ -180,7 +187,6 @@ export default {
                 background: #F5F5F5;
                 padding: 5px;
                 border-radius: 6px;
-                z-index: 50;
                 .current {
                     color: red;
                 }

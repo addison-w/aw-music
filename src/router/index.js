@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Recommend from 'components/recommend/recommend'
 import Rank from 'components/rank/rank'
 import Artist from 'components/artist/artist'
+import ArtistDetail from 'components/artist-detail/artist-detail'
 
 Vue.use(Router)
 
@@ -25,7 +26,13 @@ export default new Router({
     {
       path: '/artist',
       name: 'artist',
-      component: Artist
+      component: Artist,
+      children: [
+        {
+          path: ':id',
+          component: ArtistDetail
+        }
+      ]
     }
   ]
 })
