@@ -1,6 +1,6 @@
 <template>
     <div class="music-list-wrap">
-        <div class="nav">
+        <div class="nav" ref="nav">
             <span class="nav-left" @click="goBack">&lt;</span>
             <span class="nav-center">{{ title }}</span>
         </div>
@@ -52,7 +52,8 @@ export default {
         return {
             probeType: 3,
             listenScroll: true,
-            scrollY: -1
+            scrollY: -1,
+            imgHeight: 0
         }
     },
     components: {
@@ -63,6 +64,9 @@ export default {
             return `background-image: url(${this.bgImage})`
         }
     },
+    mounted () {
+        this.imgHeight = this.$refs.bgImg.clientHeight
+    },
     methods: {
         goBack () {
             this.$router.go(-1)
@@ -72,6 +76,10 @@ export default {
         }
     },
     watch: {
+        scrollY (newY) {
+            let scrollPercent = -(newY / this.imgHeight)
+            this.$refs.nav.style.background = `rgba(38, 38, 38, ${scrollPercent})`
+        }
     }
 }
 </script>
