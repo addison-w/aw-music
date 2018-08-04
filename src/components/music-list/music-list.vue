@@ -4,7 +4,7 @@
             <span class="nav-left" @click="goBack">&lt;</span>
             <span class="nav-center">{{ title }}</span>
         </div>
-        <scroll :data="tracks" class="list-content" ref="scroll" :probeType="probeType" :listenScroll="listenScroll">
+        <scroll :data="tracks" class="list-content" ref="scroll" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
             <div>
                 <!-- <img class="cover-image" :src="bgImage" alt=""> -->
                 <div class="bg-img" :style="setBgImage" ref="bgImg"></div>
@@ -51,7 +51,8 @@ export default {
     data () {
         return {
             probeType: 3,
-            listenScroll: true
+            listenScroll: true,
+            scrollY: -1
         }
     },
     components: {
@@ -65,15 +66,12 @@ export default {
     methods: {
         goBack () {
             this.$router.go(-1)
+        },
+        scroll (pos) {
+            this.scrollY = pos.y
         }
     },
     watch: {
-        tracks () {
-            setTimeout(() => {
-            this.$refs.scroll.refresh()
-            console.log('refreshed')
-        }, 1000);
-        }
     }
 }
 </script>
