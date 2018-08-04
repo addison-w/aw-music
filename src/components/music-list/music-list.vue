@@ -1,12 +1,11 @@
 <template>
     <div class="music-list-wrap">
         <div class="nav" ref="nav">
-            <span class="nav-left" @click="goBack">&lt;</span>
+            <span class="nav-left" @click="goBack"><i class="material-icons">arrow_back_ios</i></span>
             <span class="nav-center">{{ title }}</span>
         </div>
         <scroll :data="tracks" class="list-content" ref="scroll" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
             <div>
-                <!-- <img class="cover-image" :src="bgImage" alt=""> -->
                 <div class="bg-img" :style="setBgImage" ref="bgImg"></div>
                 <div class="bg-filter"></div>
                 <div class="track-list">
@@ -105,6 +104,9 @@ export default {
                 position: absolute;
                 left: 0;
                 padding: 0 20px;
+                i {
+                    vertical-align: middle !important;
+                }
             }
             .nav-center {
                 position: absolute;
