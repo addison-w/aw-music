@@ -4,14 +4,15 @@
             <span class="nav-left" @click="goBack"><i class="material-icons">arrow_back_ios</i></span>
             <span class="nav-center">{{ title }}</span>
         </div>
-        <scroll :data="tracks" class="list-content" ref="scroll" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
+        <scroll :data="tracks" class="list-content" ref="scroll"
+        :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
             <div>
                 <div class="bg-img" :style="setBgImage" ref="bgImg"></div>
                 <div class="bg-filter"></div>
                 <div class="track-list">
                     <ul>
-                        <li v-for="(track, index) in tracks" :key="track.id">
-                            <div class="track-num">{{ ++index }}</div>
+                        <li v-for="(track, index) in tracks" :key="track.id" @click="onClickTrack(track, index)">
+                            <div class="track-num">{{ index + 1 }}</div>
                             <div class="track-info">
                                 <p class="track-name">{{ track.name }}</p>
                                 <p class="track-desc">{{ track.artist }}</p>
@@ -26,6 +27,7 @@
 
 <script>
 import Scroll from 'base/scroll'
+import {mapActions} from 'vuex'
 export default {
     props: {
         title: {
@@ -67,11 +69,18 @@ export default {
         this.imgHeight = this.$refs.bgImg.clientHeight
     },
     methods: {
+        ...mapActions(['selectPlay']),
         goBack () {
             this.$router.go(-1)
         },
         scroll (pos) {
             this.scrollY = pos.y
+        },
+        onClickTrack (track, index) {
+            this.selectPlay({
+                list: this.tracks,
+                index
+            })
         }
     },
     watch: {

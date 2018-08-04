@@ -66,7 +66,7 @@ export default {
         }
     },
     watch: {
-        recommendSlides() {
+        recommendSlides () {
             this.$refs.scroll.refresh()
         }
     }
