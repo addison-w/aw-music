@@ -1,4 +1,4 @@
-export default class Song {
+export default class Track {
     constructor ({id, name, artist, album, image}) {
         this.id = id
         this.name = name
@@ -8,8 +8,8 @@ export default class Song {
     }
 }
 
-export function createSong (track) {
-    return new Song({
+export function createTrack (track) {
+    return new Track({
         id: track.id,
         name: track.name,
         artist: filterArtist(track.ar),

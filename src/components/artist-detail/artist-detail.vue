@@ -1,6 +1,6 @@
 <template>
     <transition name="slide">
-        <music-list :bgImage="GET_ARTIST.imgUrl" :title="GET_ARTIST.name" ></music-list>
+        <music-list :bgImage="GET_ARTIST.imgUrl" :title="GET_ARTIST.name" :tracks="tracks"></music-list>
     </transition>
 </template>
 
@@ -8,13 +8,13 @@
 import {mapGetters} from 'vuex'
 import {getArtistDetail} from 'api/artist'
 import {SUCC_CODE} from 'api/config'
-import {createSong} from 'model/Song'
+import {createTrack} from 'model/Track'
 import MusicList from 'components/music-list/music-list'
 
 export default {
     data () {
         return {
-            songs: []
+            tracks: []
         }
     },
     components: {
@@ -37,15 +37,15 @@ export default {
             getArtistDetail(this.GET_ARTIST.id)
             .then(res => {
                 if (res.code === SUCC_CODE) {
-                    this._normalizeSong(res.hotSongs)
+                    this._normalizeTrack(res.hotSongs)
                 }
-                console.log(this.songs)
+                console.log(this.tracks)
             })
             .catch(err => console.log(err))
         },
-        _normalizeSong (tracks) {
+        _normalizeTrack (tracks) {
             tracks.forEach(track => {
-                this.songs.push(createSong(track))
+                this.tracks.push(createTrack(track))
             })
         }
     }

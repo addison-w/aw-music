@@ -1,6 +1,6 @@
 <template>
     <div class="artist-wrap">
-        <scroll ref="scroll" class="artist-content" :data="artistList" :listenScroll="true" @scroll="scroll">
+        <scroll ref="scroll" class="artist-content" :data="artistList" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
             <div>
                 <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
                     <div class="grouped-flag">{{ grouped.flag }}</div>
@@ -34,6 +34,8 @@ import {mapMutations} from 'vuex'
 export default {
     data () {
         return {
+            probeType: 3,
+            listenScroll: true,
             artistList: [],
             indexList: [],
             touch: {},
