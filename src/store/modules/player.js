@@ -7,7 +7,8 @@ const state = {
     playList: [],
     sequenceList: [],
     currentIndex: -1,
-    playMode: playMode.sequence
+    playMode: playMode.sequence,
+    currentMusicUrl: ''
 }
 
 const getters = {
@@ -17,7 +18,8 @@ const getters = {
     getSequenceList: state => state.sequenceList,
     getCurrentIndex: state => state.currentIndex,
     getPlayMode: state => state.playMode,
-    getCurrentTrack: state => state.playList[state.currentIndex] || {}
+    getCurrentTrack: state => state.playList[state.currentIndex] || {},
+    getCurrentMusicUrl: state => state.currentMusicUrl
 }
 
 const actions = {
@@ -48,6 +50,9 @@ const mutations = {
     },
     [types.SET_PLAY_MODE] (state, playMode) {
         state.SET_PLAY_MODE = playMode
+    },
+    [types.SET_CURRENT_MUSIC_URL] (state, musicUrl) {
+        state.currentMusicUrl = musicUrl
     }
 }
 

@@ -16,7 +16,7 @@
             <div class="bottom">
                 <div class="mode-switch"><i class="material-icons">repeat</i></div>
                 <div class="prev-track"><i class="material-icons">skip_previous</i></div>
-                <div class="play-btn"><i class="material-icons">play_circle_outline</i></div>
+                <div class="play-btn" @click="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
                 <div class="next-track"><i class="material-icons">skip_next</i></div>
                 <div class="fav-toggle"><i class="material-icons">favorite_border</i></div>
             </div>
@@ -29,20 +29,30 @@
                 <p class="footer-track-name">{{editedTrackName()}}</p>
                 <p class="footer-artist-name">{{editedArtistName()}}</p>
             </div>
-            <div class="footer-play-btn"><i class="material-icons">play_circle_outline</i></div>
+            <div class="footer-play-btn" @click.stop="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
             <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
         </div>
+        <audio ref="audio" :src="musicUrl"></audio>
     </div>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
+import {getMusicUrl} from 'api/player'
 export default {
+    data () {
+        return {
+            musicUrl: ''
+        }
+    },
     computed: {
-        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack'])
+        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying']),
+        playIconToggle () {
+            return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
+        }
     },
     methods: {
-        ...mapMutations(['SET_FULLSCREEN']),
+        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING']),
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
         },
@@ -53,6 +63,32 @@ export default {
         editedArtistName () {
             let name = this.getCurrentTrack.artist || ''
             return name.length > 10 ? name.substr(0, 10) + '...' : name
+        },
+        togglePlay () {
+            this.SET_PLAYING(!this.getPlaying)
+        }
+    },
+    watch: {
+        getCurrentTrack (newTrack) {
+            if (newTrack) {
+                getMusicUrl(newTrack.id).then(res => {
+                    this.musicUrl = res
+                    console.log(res)
+                    this.$nextTick(() => {
+                        let audio = this.$refs.audio
+                        audio.play()
+                    })
+                })
+                .catch(err => console.log(err))
+            }
+        },
+        getPlaying (newPlaying) {
+            let audio = this.$refs.audio
+            if (audio.getAttribute('src') !== '') {
+                this.$nextTick(() => {
+                    newPlaying ? audio.play() : audio.pause()
+                })
+            }
         }
     }
 }
@@ -100,7 +136,7 @@ export default {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -65%);
+            transform: translate(-50%, -70%);
             .cd {
                 width: 75vw;
                 height: 75vw;
