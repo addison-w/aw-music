@@ -21,17 +21,19 @@
                 <div class="fav-toggle"><i class="material-icons">favorite_border</i></div>
             </div>
         </div>
-        <div class="mini-player" v-show="!getFullScreen" @click="toggleFullScreen">
-            <div class="mini-cd">
-                <img :src="this.getCurrentTrack.image" alt="" class="mini-cd-img">
+        <transition name="mini">
+            <div class="mini-player" v-show="!getFullScreen" @click="toggleFullScreen">
+                <div class="mini-cd">
+                    <img :src="this.getCurrentTrack.image" alt="" class="mini-cd-img">
+                </div>
+                <div class="footer-info">
+                    <p class="footer-track-name">{{editedTrackName()}}</p>
+                    <p class="footer-artist-name">{{editedArtistName()}}</p>
+                </div>
+                <div class="footer-play-btn" @click.stop="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
+                <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
-            <div class="footer-info">
-                <p class="footer-track-name">{{editedTrackName()}}</p>
-                <p class="footer-artist-name">{{editedArtistName()}}</p>
-            </div>
-            <div class="footer-play-btn" @click.stop="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
-            <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
-        </div>
+        </transition>
         <audio ref="audio" :src="musicUrl"></audio>
     </div>
 </template>
@@ -73,9 +75,9 @@ export default {
             if (newTrack) {
                 getMusicUrl(newTrack.id).then(res => {
                     this.musicUrl = res
-                    console.log(res)
+                    this.SET_PLAYING(true)
+                    let audio = this.$refs.audio
                     this.$nextTick(() => {
-                        let audio = this.$refs.audio
                         audio.play()
                     })
                 })
@@ -84,11 +86,9 @@ export default {
         },
         getPlaying (newPlaying) {
             let audio = this.$refs.audio
-            if (audio.getAttribute('src') !== '') {
-                this.$nextTick(() => {
-                    newPlaying ? audio.play() : audio.pause()
-                })
-            }
+            this.$nextTick(() => {
+                newPlaying ? audio.play() : audio.pause()
+            })
         }
     }
 }
@@ -176,6 +176,13 @@ export default {
         background: #F0F0F0;
         display: flex;
         align-items: center;
+        &.mini-enter-active, &.mini-leave-active {
+            transition: all 0.2s ease;
+        }
+        &.mini-enter, &.mini-leave-to {
+            transform: translateY(-10vh);
+            opacity: 0;
+        }
         .mini-cd {
             margin: 0 20px;
             width: 45px;
