@@ -10,21 +10,26 @@
             </div>
             <div class="middle">
                 <div class="cd">
-                    <img class="cd-image" :src="this.getCurrentTrack.image" alt="">
+                    <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
                 </div>
+            </div>
+            <div class="progress-bar-wrap">
+                <span>{{formatTime(currentTime)}}</span>
+                <br>
+                <span>{{formatTime(duration)}}</span>
             </div>
             <div class="bottom">
                 <div class="mode-switch"><i class="material-icons">repeat</i></div>
-                <div class="prev-track"><i class="material-icons">skip_previous</i></div>
+                <div class="prev-track" @click="prev"><i class="material-icons">skip_previous</i></div>
                 <div class="play-btn" @click="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
-                <div class="next-track"><i class="material-icons">skip_next</i></div>
+                <div class="next-track" @click="next"><i class="material-icons">skip_next</i></div>
                 <div class="fav-toggle"><i class="material-icons">favorite_border</i></div>
             </div>
         </div>
         <transition name="mini">
             <div class="mini-player" v-show="!getFullScreen" @click="toggleFullScreen">
                 <div class="mini-cd">
-                    <img :src="this.getCurrentTrack.image" alt="" class="mini-cd-img">
+                    <img :src="this.getCurrentTrack.image" alt="" :class="rotateClass">
                 </div>
                 <div class="footer-info">
                     <p class="footer-track-name">{{editedTrackName()}}</p>
@@ -34,7 +39,7 @@
                 <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <audio ref="audio" :src="musicUrl"></audio>
+        <audio ref="audio" :src="musicUrl" @timeupdate="updateTime" @playing="updateDuration"></audio>
     </div>
 </template>
 
@@ -44,17 +49,20 @@ import {getMusicUrl} from 'api/player'
 export default {
     data () {
         return {
-            musicUrl: ''
+            musicUrl: '',
+            rotateClass: '',
+            currentTime: 0,
+            duration: 0
         }
     },
     computed: {
-        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying']),
+        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex']),
         playIconToggle () {
             return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
         }
     },
     methods: {
-        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING']),
+        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX']),
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
         },
@@ -68,15 +76,49 @@ export default {
         },
         togglePlay () {
             this.SET_PLAYING(!this.getPlaying)
+        },
+        next () {
+            let newIndex = this.getCurrentIndex + 1
+            if (this.getPlayList.length === newIndex) {
+                newIndex = 0
+            }
+            this.SET_CURRENT_INDEX(newIndex)
+        },
+        prev () {
+            let newIndex = this.getCurrentIndex - 1
+            if (newIndex === -1) {
+                newIndex = this.getPlayList.length - 1
+            }
+            this.SET_CURRENT_INDEX(newIndex)
+        },
+        updateDuration (e) {
+            this.duration = e.target.duration
+        },
+        updateTime (e) {
+            this.currentTime = e.target.currentTime
+        },
+        formatTime (interval) {
+            interval = interval | 0
+            let minutes = interval / 60 | 0
+            let seconds = this._pad(interval % 60)
+            return `${minutes}:${seconds}`
+        },
+        _pad (num, n = 2) {
+            if (num.toString().length < n) {
+                return `0${num}`
+            }
+            return num
         }
     },
     watch: {
         getCurrentTrack (newTrack) {
             if (newTrack) {
+                let audio = this.$refs.audio
+                this.duration = 0
+                audio.pause()
                 getMusicUrl(newTrack.id).then(res => {
                     this.musicUrl = res
                     this.SET_PLAYING(true)
-                    let audio = this.$refs.audio
                     this.$nextTick(() => {
                         audio.play()
                     })
@@ -88,6 +130,7 @@ export default {
             let audio = this.$refs.audio
             this.$nextTick(() => {
                 newPlaying ? audio.play() : audio.pause()
+                this.rotateClass = newPlaying ? 'play' : 'play pause'
             })
         }
     }
@@ -143,16 +186,29 @@ export default {
                 border: 12px solid lightgray;
                 border-radius: 50%;
                 overflow: hidden;
-                .cd-image {
+                img {
                     width: 100%;
+                    &.play {
+                        animation: rotate 10s linear infinite
+                    }
+                    &.pause {
+                        animation-play-state: paused
+                    }
                 }
             }
+        }
+        .progress-bar-wrap {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            bottom: 22vh;
         }
         .bottom {
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 40px;
+            bottom: 30px;
             display: flex;
             flex-flow: row nowrap;
             justify-content: space-around;
@@ -189,8 +245,14 @@ export default {
             height: 45px;
             border-radius: 50%;
             overflow: hidden;
-            .mini-cd-img {
+            img {
                 width: 100%;
+                &.play {
+                    animation: rotate 10s linear infinite
+                }
+                &.pause {
+                    animation-play-state: paused
+                }
             }
         }
         .footer-info {
@@ -215,6 +277,14 @@ export default {
         .footer-list-btn {
             margin-left: 10px;
             margin-right: 20px;
+        }
+    }
+    @keyframes rotate {
+        0% {
+            transform: rotate(0);
+        }
+        100% {
+            transform: rotate(360deg);
         }
     }
 </style>
