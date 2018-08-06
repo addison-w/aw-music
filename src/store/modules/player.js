@@ -48,7 +48,7 @@ const mutations = {
         state.currentIndex = currentIndex
     },
     [types.SET_PLAY_MODE] (state, playMode) {
-        state.SET_PLAY_MODE = playMode
+        state.playMode = playMode
     },
     [types.SET_CURRENT_MUSIC_URL] (state, musicUrl) {
         state.currentMusicUrl = musicUrl

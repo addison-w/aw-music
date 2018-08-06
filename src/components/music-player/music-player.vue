@@ -15,11 +15,11 @@
             </div>
             <div class="progress-bar-wrap">
                 <span>{{formatTime(currentTime)}}</span>
-                <progress-bar class="progress-bar" :percent="progressPercent"></progress-bar>
+                <progress-bar class="progress-bar" :percent="progressPercent" @adjustPercent="onAdjustPercent"></progress-bar>
                 <span>{{formatTime(duration)}}</span>
             </div>
             <div class="bottom">
-                <div class="mode-switch"><i class="material-icons">repeat</i></div>
+                <div class="mode-switch" @click="switchPlayMode"><i class="material-icons">{{playModeIcon}}</i></div>
                 <div class="prev-track" @click="prev"><i class="material-icons">skip_previous</i></div>
                 <div class="play-btn" @click="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
                 <div class="next-track" @click="next"><i class="material-icons">skip_next</i></div>
@@ -39,14 +39,15 @@
                 <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <audio ref="audio" :src="musicUrl" @timeupdate="updateTime" @playing="updateDuration"></audio>
+        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
     </div>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import {getMusicUrl} from 'api/player'
 import ProgressBar from 'base/progress-bar'
+import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/utils'
 export default {
     data () {
         return {
@@ -60,16 +61,19 @@ export default {
         ProgressBar
     },
     computed: {
-        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex']),
+        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList']),
         playIconToggle () {
             return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
         },
         progressPercent () {
             return this.currentTime / this.duration
+        },
+        playModeIcon () {
+            return this.getPlayMode === playMode.sequence ? 'repeat' : this.getPlayMode === playMode.loop ? 'repeat_one' : 'shuffle'
         }
     },
     methods: {
-        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX']),
+        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST']),
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
         },
@@ -80,6 +84,9 @@ export default {
         editedArtistName () {
             let name = this.getCurrentTrack.artist || ''
             return name.length > 10 ? name.substr(0, 10) + '...' : name
+        },
+        editedAudioUrl () {
+            return this.getCurrentTrack.url || ''
         },
         togglePlay () {
             this.SET_PLAYING(!this.getPlaying)
@@ -98,6 +105,15 @@ export default {
             }
             this.SET_CURRENT_INDEX(newIndex)
         },
+        end () {
+            if (this.getPlayMode === playMode.loop) {
+                let audio = this.$refs.audio
+                audio.currentTime = 0
+                audio.play()
+            } else {
+                this.next()
+            }
+        },
         updateDuration (e) {
             this.duration = e.target.duration
         },
@@ -115,23 +131,40 @@ export default {
                 return `0${num}`
             }
             return num
+        },
+        onAdjustPercent (adjustedPercent) {
+            this.$refs.audio.currentTime = adjustedPercent * this.duration
+            if (!this.getPlaying) {
+                this.togglePlay()
+            }
+        },
+        switchPlayMode () {
+            const mode = (this.getPlayMode + 1) % 3
+            this.SET_PLAY_MODE(mode)
+            let list = []
+            if (mode === playMode.random) {
+                list = shuffle(this.getSequenceList)
+                this.resetCurrentIndex(list)
+                this.SET_PLAY_LIST(list)
+            }
+        },
+        resetCurrentIndex (list) {
+            let index = list.findIndex((item) => {
+                return item.id === this.getCurrentTrack.id
+            })
+            this.SET_CURRENT_INDEX(index)
         }
     },
     watch: {
-        getCurrentTrack (newTrack) {
-            if (newTrack) {
-                let audio = this.$refs.audio
-                this.duration = 0
-                audio.pause()
-                getMusicUrl(newTrack.id).then(res => {
-                    this.musicUrl = res
-                    this.SET_PLAYING(true)
-                    this.$nextTick(() => {
-                        audio.play()
-                    })
-                })
-                .catch(err => console.log(err))
+        getCurrentTrack (newTrack, oldTrack) {
+            if (newTrack.id === oldTrack.id) {
+                return
             }
+            let audio = this.$refs.audio
+            this.$nextTick(() => {
+                this.SET_PLAYING(true)
+                audio.play()
+            })
         },
         getPlaying (newPlaying) {
             let audio = this.$refs.audio
@@ -195,6 +228,7 @@ export default {
                 overflow: hidden;
                 img {
                     width: 100%;
+                    height: 100%;
                     &.play {
                         animation: rotate 10s linear infinite
                     }

@@ -10,6 +10,7 @@
                 <div class="bg-img" :style="setBgImage" ref="bgImg"></div>
                 <div class="bg-filter"></div>
                 <div class="track-list">
+                    <div class="randomRow"><span><i class="material-icons">play_circle_outline</i>随机播放</span></div>
                     <ul>
                         <li v-for="(track, index) in tracks" :key="track.id" @click="onClickTrack(track, index)">
                             <div class="track-num">{{ index + 1 }}</div>
@@ -131,6 +132,7 @@ export default {
                 width: 100vw;
                 background-position: 0 30%;
                 background-size: cover;
+                position: relative;
             }
             .bg-filter {
                 top:0;
@@ -143,6 +145,20 @@ export default {
             }
             .track-list {
                 position: relative;
+                .randomRow {
+                    width: 100vw;
+                    height: 50px;
+                    border-bottom: 1px solid #F0F0F0;
+                    line-height: 50px;
+                    span {
+                        padding: 0 25px;
+                        .material-icons {
+                            vertical-align: middle !important;
+                            font-size: 25px;
+                            padding-right: 10px;
+                        }
+                    }
+                }
                 ul {
                     display: flex;
                     flex-flow: column nowrap;

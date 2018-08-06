@@ -5,6 +5,7 @@ export default class Track {
         this.artist = artist
         this.album = album
         this.image = image
+        this.url = `http://music.163.com/song/media/outer/url?id=${id}.mp3`
     }
 }
 

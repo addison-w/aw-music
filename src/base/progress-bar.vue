@@ -1,9 +1,9 @@
 <template>
-    <div class="bar-container" ref="barContainer">
+    <div class="bar-container" ref="barContainer" @click="progressClick">
         <div class="inner-bar">
             <div class="progress" ref="progress"></div>
             <div class="btn-wrapper" ref="progressBtn"
-            @touchStart.prevent="progressTouchStart"
+            @touchstart.prevent="progressTouchStart"
             @touchmove.prevent="progressTouchMove"
             @touchend.prevent="progressTouchEnd">
                 <div class="contrl-btn"></div>
@@ -44,6 +44,16 @@ export default {
         },
         progressTouchEnd (e) {
             this.touch.initiated = false
+            this._triggerPercent()
+        },
+        _triggerPercent () {
+            const barClientWidth = this.$refs.barContainer.clientWidth - btnWidth
+            let adjustedPercent = this.$refs.progress.clientWidth / barClientWidth
+            this.$emit('adjustPercent', adjustedPercent)
+        },
+        progressClick (e) {
+            this._offSet(e.offsetX)
+            this._triggerPercent()
         },
         _offSet (offsetWidth) {
             this.$refs.progress.style.width = `${offsetWidth}px`
@@ -52,7 +62,7 @@ export default {
     },
     watch: {
         percent (newPercent) {
-            if (newPercent >= 0) {
+            if (newPercent >= 0 && !this.touch.initiated) {
                 const barClientWidth = this.$refs.barContainer.clientWidth - btnWidth
                 const offsetWidth = newPercent * barClientWidth
                 this._offSet(offsetWidth)
