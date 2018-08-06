@@ -15,7 +15,7 @@
             </div>
             <div class="progress-bar-wrap">
                 <span>{{formatTime(currentTime)}}</span>
-                <br>
+                <progress-bar class="progress-bar" :percent="progressPercent"></progress-bar>
                 <span>{{formatTime(duration)}}</span>
             </div>
             <div class="bottom">
@@ -46,6 +46,7 @@
 <script>
 import {mapGetters, mapMutations} from 'vuex'
 import {getMusicUrl} from 'api/player'
+import ProgressBar from 'base/progress-bar'
 export default {
     data () {
         return {
@@ -55,10 +56,16 @@ export default {
             duration: 0
         }
     },
+    components: {
+        ProgressBar
+    },
     computed: {
         ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex']),
         playIconToggle () {
             return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
+        },
+        progressPercent () {
+            return this.currentTime / this.duration
         }
     },
     methods: {
@@ -201,8 +208,18 @@ export default {
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            width: 90vw;
-            bottom: 22vh;
+            width: 85vw;
+            bottom: 18vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .progress-bar {
+                flex: 1
+            }
+            span {
+                font-size: 0.8rem;
+                margin: 10px;
+            }
         }
         .bottom {
             position: fixed;
