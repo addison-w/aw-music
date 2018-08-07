@@ -1,5 +1,5 @@
 <template>
-    <div class="artist-wrap">
+    <div class="artist-wrap" ref="artistList">
         <scroll ref="scroll" class="artist-content" :data="artistList" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
             <div>
                 <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
@@ -30,8 +30,10 @@ import {SUCC_CODE} from 'api/config'
 import pinyin from 'tiny-pinyin'
 import Scroll from 'base/scroll'
 import {mapMutations} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 
 export default {
+    mixins: [playListMixin],
     data () {
         return {
             probeType: 3,
@@ -51,6 +53,11 @@ export default {
         this._getArtistList()
     },
     methods: {
+        handlePlaylist (playlist) {
+            const bottom = playlist.length > 0 ? '60px' : ''
+            this.$refs.artistList.style.bottom = bottom
+            this.$refs.scroll.refresh()
+        },
         onIndexStart (e) {
             let touchIndex = e.target.getAttribute('data-index')
             this.$refs.scroll.scrollToElement(this.$refs.groupedList[touchIndex])

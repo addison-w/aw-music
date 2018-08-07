@@ -8,30 +8,37 @@
                     <p class="header-artist-name">{{editedArtistName()}}</p>
                 </div>
             </div>
-            <div class="first-middle" v-show="showFirstMiddle">
-                <div class="middle">
-                    <div class="cd" @click="toggleMiddleScreen">
-                        <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
-                    </div>
-                </div>
-                <div class="progress-bar-wrap">
-                    <span>{{formatTime(currentTime)}}</span>
-                    <progress-bar class="progress-bar" :percent="progressPercent" @adjustPercent="onAdjustPercent"></progress-bar>
-                    <span>{{formatTime(duration)}}</span>
-                </div>
-            </div>
-            <div class="second-middle" v-show="!showFirstMiddle" @click="toggleMiddleScreen">
-                <scroll class="lyric-wrap" ref="lyric" :data="currentLyric && currentLyric.lines">
-                    <div>
-                        <div v-if="currentLyric">
-                            <p class="lyric-row" :class="{'current-line' : currentLine === index}"
-                            v-for="(line, index) in currentLyric.lines" :key="index">
-                                {{line.txt}}
-                            </p>
+            <transition name="fade">
+                <div class="first-middle" v-show="showFirstMiddle">
+                    <div class="middle">
+                        <div class="cd" @click="toggleMiddleScreen">
+                            <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
                         </div>
                     </div>
-                </scroll>
-            </div>
+                    <div class="first-middle-lyric">
+                        <p v-if="currentLyricText">{{currentLyricText}}</p>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <span>{{formatTime(currentTime)}}</span>
+                        <progress-bar class="progress-bar" :percent="progressPercent" @adjustPercent="onAdjustPercent"></progress-bar>
+                        <span>{{formatTime(duration)}}</span>
+                    </div>
+                </div>
+            </transition>
+            <transition name="fade">
+                <div class="second-middle" v-show="!showFirstMiddle" @click="toggleMiddleScreen">
+                    <scroll class="lyric-wrap" ref="lyricList" :data="currentLyric && currentLyric.lines">
+                        <div>
+                            <div v-if="currentLyric">
+                                <p class="lyric-row" ref="lyricLine" :class="{'current-line' : currentLine === index}"
+                                v-for="(line, index) in currentLyric.lines" :key="index">
+                                    {{line.txt}}
+                                </p>
+                            </div>
+                        </div>
+                    </scroll>
+                </div>
+            </transition>
             <div class="bottom">
                 <div class="mode-switch" @click="switchPlayMode"><i class="material-icons">{{playModeIcon}}</i></div>
                 <div class="prev-track" @click="prev"><i class="material-icons">skip_previous</i></div>
@@ -53,7 +60,7 @@
                 <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @pause="pause" @ended="end"></audio>
+        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
     </div>
 </template>
 
@@ -75,7 +82,8 @@ export default {
             duration: 0,
             currentLyric: null,
             currentLine: 0,
-            showFirstMiddle: true
+            showFirstMiddle: true,
+            currentLyricText: ''
         }
     },
     components: {
@@ -112,8 +120,15 @@ export default {
         },
         togglePlay () {
             this.SET_PLAYING(!this.getPlaying)
+            if (this.currentLyric) {
+                this.currentLyric.togglePlay()
+            }
         },
         next () {
+            if (this.getPlayList.length === 1) {
+                this.loop()
+            }
+
             let newIndex = this.getCurrentIndex + 1
             if (this.getPlayList.length === newIndex) {
                 newIndex = 0
@@ -121,6 +136,10 @@ export default {
             this.SET_CURRENT_INDEX(newIndex)
         },
         prev () {
+            if (this.getPlayList.length === 1) {
+                this.loop()
+            }
+
             let newIndex = this.getCurrentIndex - 1
             if (newIndex === -1) {
                 newIndex = this.getPlayList.length - 1
@@ -129,19 +148,24 @@ export default {
         },
         end () {
             if (this.getPlayMode === playMode.loop) {
-                let audio = this.$refs.audio
-                audio.currentTime = 0
-                audio.play()
+                this.loop()
             } else {
                 this.next()
             }
         },
+        loop () {
+            let audio = this.$refs.audio
+            audio.currentTime = 0
+            audio.play()
+            if (this.currentLyric) {
+                this.currentLyric.seek(0)
+            }
+        },
         updateDuration (e) {
             this.duration = e.target.duration
-            this.currentLyric.togglePlay()
-        },
-        pause () {
-            this.currentLyric.togglePlay()
+            if (this.currentLyric && e.target.currentTime === 0) {
+                this.currentLyric.play()
+            }
         },
         updateTime (e) {
             this.currentTime = e.target.currentTime
@@ -159,9 +183,13 @@ export default {
             return num
         },
         onAdjustPercent (adjustedPercent) {
-            this.$refs.audio.currentTime = adjustedPercent * this.duration
+            const currentTime = adjustedPercent * this.duration
+            this.$refs.audio.currentTime = currentTime
             if (!this.getPlaying) {
                 this.togglePlay()
+            }
+            if (this.currentLyric) {
+                this.currentLyric.seek(currentTime * 1000)
             }
         },
         switchPlayMode () {
@@ -182,9 +210,21 @@ export default {
         },
         toggleMiddleScreen () {
             this.showFirstMiddle = !this.showFirstMiddle
+            if (this.currentLyric) {
+                this.$nextTick(() => {
+                    this.$refs.lyricList.refresh()
+                })
+            }
         },
         handleLyric ({lineNum, txt}) {
             this.currentLine = lineNum
+            if (lineNum > 5) {
+                let lineElement = this.$refs.lyricLine[lineNum - 5]
+                this.$refs.lyricList.scrollToElement(lineElement, 1000)
+            } else {
+                this.$refs.lyricList.scrollTo(0, 0, 1000)
+            }
+            this.currentLyricText = txt
         }
     },
     watch: {
@@ -192,11 +232,19 @@ export default {
             if (newTrack.id === oldTrack.id) {
                 return
             }
+            if (this.currentLyric) {
+                this.currentLyric.stop()
+                this.currentLyricText = ''
+            }
             this.$nextTick(() => {
                 getLyrics(newTrack.id)
                 .then(res => {
-                    if (res.code === SUCC_CODE) {
+                    if (res.code === SUCC_CODE && res.lrc) {
                         this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric)
+                    } else {
+                        this.currentLyric = null
+                        this.currentLyricText = ''
+                        this.currentLine = 0
                     }
                 })
                 this.SET_PLAYING(true)
@@ -253,10 +301,16 @@ export default {
                 }
             }
         }
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .5s;
+        }
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+        }
         .first-middle {
             .middle {
                 position: fixed;
-                top: 50%;
+                top: 45%;
                 left: 50%;
                 transform: translate(-50%, -70%);
                 .cd {
@@ -293,6 +347,18 @@ export default {
                 p.current-line {
                     color: #d44439;
                 }
+            }
+        }
+        .first-middle-lyric {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            overflow: hidden;
+            bottom: 27vh;
+            p {
+                width: 100%;
+                text-align: center;
             }
         }
         .progress-bar-wrap {

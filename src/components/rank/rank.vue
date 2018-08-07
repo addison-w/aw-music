@@ -1,6 +1,6 @@
 <template>
-    <div class="rank-wrap">
-        <scroll :data="rankList" class="rank-content">
+    <div class="rank-wrap" ref="rank">
+        <scroll :data="rankList" class="rank-content" ref="scroll">
             <div>
                 <div class="rank-row" v-for="rank in rankList" :key="rank.id">
                     <img :src="rank.coverImgUrl" alt="">
@@ -19,7 +19,9 @@
 import {getAllRankList} from 'api/rank'
 import {SUCC_CODE} from 'api/config'
 import Scroll from 'base/scroll'
+import {playListMixin} from 'common/js/mixin'
 export default {
+    mixins: [playListMixin],
     data () {
         return {
             rankList: []
@@ -32,6 +34,11 @@ export default {
         this._getAllRankList()
     },
     methods: {
+        handlePlaylist (playlist) {
+            const bottom = playlist.length > 0 ? '60px' : ''
+            this.$refs.rank.style.bottom = bottom
+            this.$refs.scroll.refresh()
+        },
         _getAllRankList () {
             getAllRankList().then(res => {
                 res.map(rank => {

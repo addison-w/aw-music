@@ -1,5 +1,5 @@
 <template>
-    <div class="recommend-wrap">
+    <div class="recommend-wrap" ref="recommend">
         <scroll ref="scroll" class="recommend-content" :data="recommendSongLists">
             <div class="content">
                 <swiper v-if="recommendSlides.length" :items="recommendSlides" :cname="swiperClass"></swiper>
@@ -17,8 +17,10 @@ import RecommendSlide from 'model/RecommendSlide'
 import Swiper from 'base/swiper'
 import Scroll from 'base/scroll'
 import RecommendSongList from './recommendSongList'
+import {playListMixin} from 'common/js/mixin'
 
 export default {
+    mixins: [playListMixin],
     data () {
         return {
             recommendSlides: [],
@@ -36,6 +38,11 @@ export default {
         this._getRecommendSongLists()
     },
     methods: {
+        handlePlaylist (playlist) {
+            const bottom = playlist.length > 0 ? '60px' : ''
+            this.$refs.recommend.style.bottom = bottom
+            this.$refs.scroll.refresh()
+        },
         _getRecommendSliders () {
             getRecommendSlides().then(res => {
                 if (res.code === SUCC_CODE) {

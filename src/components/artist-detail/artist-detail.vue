@@ -39,7 +39,6 @@ export default {
                 if (res.code === SUCC_CODE) {
                     this._normalizeTrack(res.hotSongs)
                 }
-                console.log(this.tracks)
             })
             .catch(err => console.log(err))
         },

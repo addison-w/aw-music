@@ -1,5 +1,5 @@
 <template>
-    <div class="music-list-wrap">
+    <div class="music-list-wrap" ref="musicList">
         <div class="nav" ref="nav">
             <span class="nav-left" @click="goBack"><i class="material-icons">arrow_back_ios</i></span>
             <span class="nav-center">{{ title }}</span>
@@ -29,7 +29,9 @@
 <script>
 import Scroll from 'base/scroll'
 import {mapActions} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 export default {
+    mixins: [playListMixin],
     props: {
         title: {
             type: String,
@@ -71,6 +73,11 @@ export default {
     },
     methods: {
         ...mapActions(['selectPlay', 'randomPlay']),
+        handlePlaylist (playlist) {
+            const bottom = playlist.length > 0 ? '60px' : ''
+            this.$refs.musicList.style.bottom = bottom
+            this.$refs.scroll.refresh()
+        },
         goBack () {
             this.$router.go(-1)
         },
