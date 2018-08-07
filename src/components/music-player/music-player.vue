@@ -8,15 +8,29 @@
                     <p class="header-artist-name">{{editedArtistName()}}</p>
                 </div>
             </div>
-            <div class="middle">
-                <div class="cd">
-                    <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
+            <div class="first-middle" v-show="showFirstMiddle">
+                <div class="middle">
+                    <div class="cd" @click="toggleMiddleScreen">
+                        <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
+                    </div>
+                </div>
+                <div class="progress-bar-wrap">
+                    <span>{{formatTime(currentTime)}}</span>
+                    <progress-bar class="progress-bar" :percent="progressPercent" @adjustPercent="onAdjustPercent"></progress-bar>
+                    <span>{{formatTime(duration)}}</span>
                 </div>
             </div>
-            <div class="progress-bar-wrap">
-                <span>{{formatTime(currentTime)}}</span>
-                <progress-bar class="progress-bar" :percent="progressPercent" @adjustPercent="onAdjustPercent"></progress-bar>
-                <span>{{formatTime(duration)}}</span>
+            <div class="second-middle" v-show="!showFirstMiddle" @click="toggleMiddleScreen">
+                <scroll class="lyric-wrap" ref="lyric" :data="currentLyric && currentLyric.lines">
+                    <div>
+                        <div v-if="currentLyric">
+                            <p class="lyric-row" :class="{'current-line' : currentLine === index}"
+                            v-for="(line, index) in currentLyric.lines" :key="index">
+                                {{line.txt}}
+                            </p>
+                        </div>
+                    </div>
+                </scroll>
             </div>
             <div class="bottom">
                 <div class="mode-switch" @click="switchPlayMode"><i class="material-icons">{{playModeIcon}}</i></div>
@@ -39,7 +53,7 @@
                 <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
+        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @pause="pause" @ended="end"></audio>
     </div>
 </template>
 
@@ -48,17 +62,25 @@ import {mapGetters, mapMutations} from 'vuex'
 import ProgressBar from 'base/progress-bar'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/utils'
+import {getLyrics} from 'api/player'
+import {SUCC_CODE} from 'api/config'
+import Lyric from 'lyric-parser'
+import Scroll from 'base/scroll'
 export default {
     data () {
         return {
             musicUrl: '',
             rotateClass: '',
             currentTime: 0,
-            duration: 0
+            duration: 0,
+            currentLyric: null,
+            currentLine: 0,
+            showFirstMiddle: true
         }
     },
     components: {
-        ProgressBar
+        ProgressBar,
+        Scroll
     },
     computed: {
         ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList']),
@@ -116,6 +138,10 @@ export default {
         },
         updateDuration (e) {
             this.duration = e.target.duration
+            this.currentLyric.togglePlay()
+        },
+        pause () {
+            this.currentLyric.togglePlay()
         },
         updateTime (e) {
             this.currentTime = e.target.currentTime
@@ -153,6 +179,12 @@ export default {
                 return item.id === this.getCurrentTrack.id
             })
             this.SET_CURRENT_INDEX(index)
+        },
+        toggleMiddleScreen () {
+            this.showFirstMiddle = !this.showFirstMiddle
+        },
+        handleLyric ({lineNum, txt}) {
+            this.currentLine = lineNum
         }
     },
     watch: {
@@ -161,6 +193,12 @@ export default {
                 return
             }
             this.$nextTick(() => {
+                getLyrics(newTrack.id)
+                .then(res => {
+                    if (res.code === SUCC_CODE) {
+                        this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric)
+                    }
+                })
                 this.SET_PLAYING(true)
                 let audio = this.$refs.audio
                 audio.play()
@@ -215,26 +253,45 @@ export default {
                 }
             }
         }
-        .middle {
+        .first-middle {
+            .middle {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -70%);
+                .cd {
+                    width: 75vw;
+                    height: 75vw;
+                    border: 12px solid lightgray;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        &.play {
+                            animation: rotate 10s linear infinite
+                        }
+                        &.pause {
+                            animation-play-state: paused
+                        }
+                    }
+                }
+            }
+        }
+        .second-middle {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -70%);
-            .cd {
-                width: 75vw;
-                height: 75vw;
-                border: 12px solid lightgray;
-                border-radius: 50%;
+            top: 60px;
+            bottom: 110px;
+            width: 100vw;
+            .lyric-wrap {
+                height: 100%;
                 overflow: hidden;
-                img {
-                    width: 100%;
-                    height: 100%;
-                    &.play {
-                        animation: rotate 10s linear infinite
-                    }
-                    &.pause {
-                        animation-play-state: paused
-                    }
+                p {
+                    line-height: 50px;
+                    text-align: center;
+                }
+                p.current-line {
+                    color: #d44439;
                 }
             }
         }
@@ -259,7 +316,8 @@ export default {
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 30px;
+            height: 70px;
+            bottom: 25px;
             display: flex;
             flex-flow: row nowrap;
             justify-content: space-around;

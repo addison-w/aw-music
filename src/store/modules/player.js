@@ -32,7 +32,6 @@ const getters = {
 const actions = {
     selectPlay: ({commit, state}, {list, index}) => {
         commit(types.SET_FULLSCREEN, true)
-        commit(types.SET_PLAYING, true)
         commit(types.SET_SEQUENCE_LIST, list)
         if (state.playMode === playMode.random) {
             let shuffledList = shuffle(list)
