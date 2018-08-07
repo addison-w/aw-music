@@ -15,3 +15,13 @@ export function getMusicUrl (id) {
         .catch(err => reject(err))
     })
 }
+
+export function getLyrics (id) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/lyric?id=${id}`)
+        .then(res => {
+            resolve(res.data)
+        })
+        .catch(err => reject(err))
+    })
+}
