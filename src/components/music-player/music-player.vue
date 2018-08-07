@@ -160,15 +160,15 @@ export default {
             if (newTrack.id === oldTrack.id) {
                 return
             }
-            let audio = this.$refs.audio
             this.$nextTick(() => {
                 this.SET_PLAYING(true)
+                let audio = this.$refs.audio
                 audio.play()
             })
         },
         getPlaying (newPlaying) {
-            let audio = this.$refs.audio
             this.$nextTick(() => {
+                let audio = this.$refs.audio
                 newPlaying ? audio.play() : audio.pause()
                 this.rotateClass = newPlaying ? 'play' : 'play pause'
             })

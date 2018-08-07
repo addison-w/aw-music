@@ -10,7 +10,7 @@
                 <div class="bg-img" :style="setBgImage" ref="bgImg"></div>
                 <div class="bg-filter"></div>
                 <div class="track-list">
-                    <div class="randomRow"><span><i class="material-icons">play_circle_outline</i>随机播放</span></div>
+                    <div class="randomRow" v-show="tracks.length > 0" @click="random"><span><i class="material-icons">play_circle_outline</i>随机播放</span></div>
                     <ul>
                         <li v-for="(track, index) in tracks" :key="track.id" @click="onClickTrack(track, index)">
                             <div class="track-num">{{ index + 1 }}</div>
@@ -70,7 +70,7 @@ export default {
         this.imgHeight = this.$refs.bgImg.clientHeight
     },
     methods: {
-        ...mapActions(['selectPlay']),
+        ...mapActions(['selectPlay', 'randomPlay']),
         goBack () {
             this.$router.go(-1)
         },
@@ -81,6 +81,11 @@ export default {
             this.selectPlay({
                 list: this.tracks,
                 index
+            })
+        },
+        random () {
+            this.randomPlay({
+                list: this.tracks
             })
         }
     },
