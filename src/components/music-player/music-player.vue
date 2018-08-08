@@ -310,7 +310,7 @@ export default {
         .first-middle {
             .middle {
                 position: fixed;
-                top: 45%;
+                top: 47%;
                 left: 50%;
                 transform: translate(-50%, -70%);
                 .cd {
