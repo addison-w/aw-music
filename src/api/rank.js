@@ -21,3 +21,13 @@ export function getAllRankList () {
         .catch(err => reject(err))
     })
 }
+
+export function getRankById (id) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/top/list?idx=${id}`)
+        .then(res => {
+            resolve(res.data)
+        })
+        .catch(err => reject(err))
+    })
+}

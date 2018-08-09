@@ -1,11 +1,13 @@
 <template>
     <div class="recommenSongList">
-        <tile v-for="songList in recommendSongLists" :key="songList.id" :songList="songList" :cname="tileClass"></tile>
+        <tile v-for="songList in recommendSongLists" :key="songList.id" :songList="songList" :cname="tileClass"  :id="songList.id"
+        @select="selectTrackList"></tile>
     </div>
 </template>
 
 <script>
 import Tile from 'base/tile'
+
 export default {
     props: {
         recommendSongLists: {
@@ -21,6 +23,11 @@ export default {
     data () {
         return {
             tileClass: 'tile'
+        }
+    },
+    methods: {
+        selectTrackList (id) {
+            this.$emit('select', id)
         }
     }
 }

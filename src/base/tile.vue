@@ -1,5 +1,5 @@
 <template>
-    <div :class="cname">
+    <div :class="cname" @click="selectTrackList">
         <img :src="songList.imgUrl" alt="">
         <p>{{ songList.name }}</p>
     </div>
@@ -15,6 +15,11 @@ export default {
             id: Number
         },
         cname: String
+    },
+    methods: {
+        selectTrackList () {
+            this.$emit('select', this.songList.id)
+        }
     }
 }
 </script>

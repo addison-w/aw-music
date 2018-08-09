@@ -4,20 +4,22 @@
             <div class="content">
                 <swiper v-if="recommendSlides.length" :items="recommendSlides" :cname="swiperClass"></swiper>
                 <p class="sub-heading-text">推荐歌单</p>
-                <RecommendSongList :recommendSongLists="recommendSongLists"></RecommendSongList>
+                <RecommendSongList :recommendSongLists="recommendSongLists" @select="selectTrackList"></RecommendSongList>
             </div>
         </scroll>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-import {getRecommendSlides, getRecommendSongLists} from 'api/recommend'
+import {getRecommendSlides, getRecommendSongLists, getTrackListById} from 'api/recommend'
 import {SUCC_CODE} from 'api/config'
 import RecommendSlide from 'model/RecommendSlide'
 import Swiper from 'base/swiper'
 import Scroll from 'base/scroll'
 import RecommendSongList from './recommendSongList'
 import {playListMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
 
 export default {
     mixins: [playListMixin],
@@ -38,6 +40,7 @@ export default {
         this._getRecommendSongLists()
     },
     methods: {
+        ...mapMutations(['SET_TRACK_LIST']),
         handlePlaylist (playlist) {
             const bottom = playlist.length > 0 ? '60px' : ''
             this.$refs.recommend.style.bottom = bottom
@@ -70,6 +73,17 @@ export default {
                     })
                 }
             })
+        },
+        selectTrackList (id) {
+            getTrackListById(id).then(res => {
+                if (res.code === SUCC_CODE) {
+                    this.SET_TRACK_LIST(res.playlist)
+                    this.$router.push({
+                        path: `/recommend/${id}`
+                    })
+                }
+            })
+            .catch(err => console.log(err))
         }
     },
     watch: {

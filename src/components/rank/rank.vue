@@ -2,7 +2,7 @@
     <div class="rank-wrap" ref="rank">
         <scroll :data="rankList" class="rank-content" ref="scroll">
             <div>
-                <div class="rank-row" v-for="rank in rankList" :key="rank.id">
+                <div class="rank-row" v-for="rank in rankList" :key="rank.id" @click="selectRank(rank)">
                     <img :src="rank.coverImgUrl" alt="">
                     <ul>
                         <li v-for="(track, index) in rank.tracks.slice(0 , 3)" :key="track.id">
@@ -12,6 +12,7 @@
                 </div>
             </div>
         </scroll>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -20,6 +21,7 @@ import {getAllRankList} from 'api/rank'
 import {SUCC_CODE} from 'api/config'
 import Scroll from 'base/scroll'
 import {playListMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
 export default {
     mixins: [playListMixin],
     data () {
@@ -34,6 +36,7 @@ export default {
         this._getAllRankList()
     },
     methods: {
+        ...mapMutations(['SET_RANK']),
         handlePlaylist (playlist) {
             const bottom = playlist.length > 0 ? '60px' : ''
             this.$refs.rank.style.bottom = bottom
@@ -51,6 +54,12 @@ export default {
                         })
                     }
                 })
+            })
+        },
+        selectRank (rank) {
+            this.SET_RANK(rank)
+            this.$router.push({
+                path: `rank/${rank.id}`
             })
         }
     }

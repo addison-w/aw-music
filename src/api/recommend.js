@@ -20,3 +20,13 @@ export function getRecommendSongLists () {
         .catch(err => reject(err))
     })
 }
+
+export function getTrackListById (id) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/playlist/detail?id=${id}`)
+        .then(res => {
+            resolve(res.data)
+        })
+        .catch(err => reject(err))
+    })
+}
