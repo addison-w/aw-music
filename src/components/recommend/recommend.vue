@@ -75,15 +75,12 @@ export default {
             })
         },
         selectTrackList (id) {
-            getTrackListById(id).then(res => {
-                if (res.code === SUCC_CODE) {
-                    this.SET_TRACK_LIST(res.playlist)
-                    this.$router.push({
-                        path: `/recommend/${id}`
-                    })
-                }
+            this.SET_TRACK_LIST({
+                id: id
             })
-            .catch(err => console.log(err))
+            this.$router.push({
+                path: `/recommend/${id}`
+            })
         }
     },
     watch: {

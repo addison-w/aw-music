@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import {getTrackListById} from 'api/recommend'
+import {SUCC_CODE} from 'api/config'
 import MusicList from 'components/music-list/music-list'
 import {createTrack} from 'model/Track'
 import {mapGetters} from 'vuex'
@@ -32,9 +34,16 @@ export default {
                     path: '/recommend'
                 })
             }
-            this.title = this.GET_TRACK_LIST.name
-            this.bgImage = this.GET_TRACK_LIST.coverImgUrl
-            this._normalizeTracks(this.GET_TRACK_LIST.tracks)
+            let id = this.GET_TRACK_LIST.id
+            getTrackListById(id).then(res => {
+                if (res.code === SUCC_CODE) {
+                    this.title = res.playlist.name
+                    this.bgImage = res.playlist.coverImgUrl
+                    this._normalizeTracks(res.playlist.tracks)
+                }
+            })
+            .catch(err => console.log(err))
+            
         },
         _normalizeTracks (tracks) {
             tracks.map(track => {
