@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {getRecommendSlides, getRecommendSongLists, getTrackListById} from 'api/recommend'
+import {getRecommendSlides, getRecommendSongLists} from 'api/recommend'
 import {SUCC_CODE} from 'api/config'
 import RecommendSlide from 'model/RecommendSlide'
 import Swiper from 'base/swiper'

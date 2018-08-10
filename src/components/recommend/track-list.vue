@@ -43,7 +43,6 @@ export default {
                 }
             })
             .catch(err => console.log(err))
-            
         },
         _normalizeTracks (tracks) {
             tracks.map(track => {
