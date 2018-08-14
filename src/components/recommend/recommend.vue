@@ -3,6 +3,7 @@
         <scroll ref="scroll" class="recommend-content" :data="recommendSongLists">
             <div class="content">
                 <swiper v-if="recommendSlides.length" :items="recommendSlides" :cname="swiperClass"></swiper>
+                <loading v-show="!recommendSlides.length"></loading>
                 <p class="sub-heading-text">推荐歌单</p>
                 <RecommendSongList :recommendSongLists="recommendSongLists" @select="selectTrackList"></RecommendSongList>
             </div>
@@ -20,6 +21,7 @@ import Scroll from 'base/scroll'
 import RecommendSongList from './recommendSongList'
 import {playListMixin} from 'common/js/mixin'
 import {mapMutations} from 'vuex'
+import Loading from 'base/loading'
 
 export default {
     mixins: [playListMixin],
@@ -33,7 +35,8 @@ export default {
     components: {
         Swiper,
         Scroll,
-        RecommendSongList
+        RecommendSongList,
+        Loading
     },
     created () {
         this._getRecommendSliders()

@@ -9,6 +9,7 @@
                         <span>{{ artist.name }}</span>
                     </div>
                 </div>
+                <loading v-show="!artistList.length > 0"></loading>
             </div>
             <div class="index-list">
                 <ul>
@@ -31,6 +32,7 @@ import pinyin from 'tiny-pinyin'
 import Scroll from 'base/scroll'
 import {mapMutations} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
+import Loading from 'base/loading'
 
 export default {
     mixins: [playListMixin],
@@ -47,7 +49,8 @@ export default {
         }
     },
     components: {
-        Scroll
+        Scroll,
+        Loading
     },
     created () {
         this._getArtistList()

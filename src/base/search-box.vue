@@ -1,6 +1,6 @@
 <template>
     <div class="search-bar-wrap">
-        <div class="search-icon">
+        <div class="search-icon" @click="onClickBack">
             <i class="material-icons">chevron_left</i>
         </div>
         <div class="search-input">
@@ -30,6 +30,9 @@ export default {
     methods: {
         clearQuery () {
             this.$emit('clearQuery')
+        },
+        onClickBack () {
+            this.$router.go(-1)
         }
     },
     watch: {

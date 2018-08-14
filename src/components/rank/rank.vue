@@ -10,6 +10,7 @@
                         </li>
                     </ul>
                 </div>
+                <loading v-show="!rankList.length"></loading>
             </div>
         </scroll>
         <router-view></router-view>
@@ -22,6 +23,7 @@ import {SUCC_CODE} from 'api/config'
 import Scroll from 'base/scroll'
 import {playListMixin} from 'common/js/mixin'
 import {mapMutations} from 'vuex'
+import Loading from 'base/loading'
 export default {
     mixins: [playListMixin],
     data () {
@@ -30,7 +32,8 @@ export default {
         }
     },
     components: {
-        Scroll
+        Scroll,
+        Loading
     },
     created () {
         this._getAllRankList()

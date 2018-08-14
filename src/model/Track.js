@@ -19,6 +19,16 @@ export function createTrack (track) {
     })
 }
 
+export function createSearchedTrack (track) {
+    return new Track({
+        id: track.id,
+        name: track.name,
+        artist: filterArtist(track.artists),
+        album: track.album.name || '',
+        image: ''
+    })
+}
+
 function filterArtist (artists) {
     if (!artists) {
         return ''

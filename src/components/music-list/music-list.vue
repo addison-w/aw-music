@@ -20,6 +20,7 @@
                             </div>
                         </li>
                     </ul>
+                    <loading v-show="!tracks.length"></loading>
                 </div>
             </div>
         </scroll>
@@ -30,6 +31,7 @@
 import Scroll from 'base/scroll'
 import {mapActions} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
+import Loading from 'base/loading'
 export default {
     mixins: [playListMixin],
     props: {
@@ -61,7 +63,8 @@ export default {
         }
     },
     components: {
-        Scroll
+        Scroll,
+        Loading
     },
     computed: {
         setBgImage () {
