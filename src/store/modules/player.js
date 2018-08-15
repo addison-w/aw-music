@@ -50,6 +50,11 @@ const actions = {
         let shuffledList = shuffle(list)
         commit(types.SET_PLAY_LIST, shuffledList)
         commit(types.SET_CURRENT_INDEX, 0)
+    },
+    selectExistedTrack ({commit}, {index}) {
+        commit(types.SET_FULLSCREEN, true)
+        commit(types.SET_PLAYING, true)
+        commit(types.SET_CURRENT_INDEX, index)
     }
 }
 

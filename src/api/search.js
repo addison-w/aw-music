@@ -16,3 +16,11 @@ export function searchByKeywordAndType (keyword = '', type = QUERY_TYPE.Tracks, 
         .catch(err => reject(err))
     })
 }
+
+export function searchTrackDetailById (id) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/song/detail?ids=${id}`)
+        .then(res => resolve(res.data))
+        .catch(err => reject(err))
+    })
+}

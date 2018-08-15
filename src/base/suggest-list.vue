@@ -1,10 +1,10 @@
 <template>
-    <div class="suggest-list-wrap">
-        <scroll class="scroll" :data="tracks" :pullup="pullup" @scrollToEnd="loadMore">
+    <div class="suggest-list-wrap" ref="suggestList">
+        <scroll class="scroll" :data="tracks" :pullup="pullup" @scrollToEnd="loadMore" ref="scroll">
             <div>
                 <p class="suggest-title">最佳匹配</p>
                 <ul class="suggest-list">
-                    <li v-for="track in tracks" :key="track.id" class="list-row" @click="selectTrack(track)">
+                    <li v-for="(track, index) in tracks" :key="index" class="list-row" @click="selectTrack(track)">
                         <p class="track-name">{{ track.name }}</p>
                         <p class="track-artist">{{ track.artist }}</p>
                     </li>
@@ -18,7 +18,12 @@
 <script>
 import Scroll from 'base/scroll'
 import Loading from 'base/loading'
+import {mapGetters, mapActions} from 'vuex'
+import {searchTrackDetailById} from 'api/search'
+import {SUCC_CODE} from 'api/config'
+import {playListMixin} from 'common/js/mixin'
 export default {
+    mixins: [playListMixin],
     data () {
         return {
             pullup: true,
@@ -43,7 +48,11 @@ export default {
         Scroll,
         Loading
     },
+    computed: {
+        ...mapGetters(['getPlayList', 'getSequenceList'])
+    },
     methods: {
+        ...mapActions(['selectPlay', 'selectExistedTrack']),
         loadMore () {
             if (this.isLoading === false) {
                 this.$emit('loadMore')
@@ -51,7 +60,40 @@ export default {
             }
         },
         selectTrack (track) {
-
+            searchTrackDetailById(track.id)
+            .then(res => {
+                if (res.code === SUCC_CODE) {
+                    let img = res.songs[0].al.picUrl
+                    track.image = img
+                }
+            })
+            .then(() => {
+                if (this.getPlayList.length === 0) { // If play list is empty
+                    this.selectPlay({
+                        list: [track],
+                        index: 0
+                    })
+                } else if (this.getPlayList.find(t => t.id === track.id)) { // if this track already existed in the play list
+                    let existedIndex = this.getPlayList.findIndex(t => t.id === track.id)
+                    this.selectExistedTrack({
+                        index: existedIndex
+                    })
+                } else { // Insert this track to the play list end
+                    let seqList = this.getSequenceList.concat()
+                    seqList.push(track)
+                    let newIndex = seqList.length - 1
+                    this.selectPlay({
+                        list: seqList,
+                        index: newIndex
+                    })
+                }
+            })
+            .catch(err => console.log(err))
+        },
+        handlePlaylist (playlist) {
+            const bottom = playlist.length > 0 ? '60px' : ''
+            this.$refs.suggestList.style.bottom = bottom
+            this.$refs.scroll.refresh()
         }
     }
 }

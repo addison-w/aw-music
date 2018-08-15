@@ -271,6 +271,7 @@ export default {
         right: 0;
         bottom: 0;
         background: white;
+        z-index: 150;
         .top {
             position: fixed;
             height: 50px;
@@ -407,6 +408,7 @@ export default {
         background: #F0F0F0;
         display: flex;
         align-items: center;
+        z-index: 150;
         &.mini-enter-active, &.mini-leave-active {
             transition: all 0.2s ease;
         }
