@@ -60,7 +60,7 @@
                 <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <audio ref="audio" :src="editedAudioUrl()" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
+        <audio ref="audio" :src="getCurrentMusicUrl" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
     </div>
 </template>
 
@@ -69,7 +69,7 @@ import {mapGetters, mapMutations} from 'vuex'
 import ProgressBar from 'base/progress-bar'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/utils'
-import {getLyrics} from 'api/player'
+import {getLyrics, getMusicUrl} from 'api/player'
 import {SUCC_CODE} from 'api/config'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll'
@@ -91,7 +91,7 @@ export default {
         Scroll
     },
     computed: {
-        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList']),
+        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList', 'getCurrentMusicUrl']),
         playIconToggle () {
             return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
         },
@@ -103,7 +103,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST']),
+        ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST', 'SET_CURRENT_MUSIC_URL']),
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
         },
@@ -236,21 +236,25 @@ export default {
                 this.currentLyric.stop()
                 this.currentLyricText = ''
             }
-            this.$nextTick(() => {
-                getLyrics(newTrack.id)
-                .then(res => {
-                    if (res.code === SUCC_CODE && res.lrc) {
-                        this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric)
-                    } else {
-                        this.currentLyric = null
-                        this.currentLyricText = ''
-                        this.currentLine = 0
-                    }
+            getMusicUrl(newTrack.id).then(url => {
+                this.SET_CURRENT_MUSIC_URL(url)
+                this.$nextTick(() => {
+                    getLyrics(newTrack.id)
+                    .then(res => {
+                        if (res.code === SUCC_CODE && res.lrc) {
+                            this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric)
+                        } else {
+                            this.currentLyric = null
+                            this.currentLyricText = ''
+                            this.currentLine = 0
+                        }
+                    })
+                    this.SET_PLAYING(true)
+                    let audio = this.$refs.audio
+                    audio.play()
                 })
-                this.SET_PLAYING(true)
-                let audio = this.$refs.audio
-                audio.play()
             })
+            .catch(err => console.log(err))
         },
         getPlaying (newPlaying) {
             this.$nextTick(() => {
