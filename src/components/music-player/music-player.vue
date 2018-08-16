@@ -48,7 +48,7 @@
             </div>
         </div>
         <transition name="mini">
-            <div class="mini-player" v-show="!getFullScreen" @click="toggleFullScreen">
+            <div class="mini-player" v-show="!getFullScreen && !showPlayList" @click="toggleFullScreen">
                 <div class="mini-cd">
                     <img :src="this.getCurrentTrack.image" alt="" :class="rotateClass">
                 </div>
@@ -57,9 +57,10 @@
                     <p class="footer-artist-name">{{editedArtistName()}}</p>
                 </div>
                 <div class="footer-play-btn" @click.stop="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
-                <div class="footer-list-btn"><i class="material-icons">queue_music</i></div>
+                <div class="footer-list-btn" @click.stop="toggleShowPlayList"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
+        <play-list v-show="showPlayList" @hidePlayList="toggleShowPlayList"></play-list>
         <audio ref="audio" :src="getCurrentMusicUrl" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
     </div>
 </template>
@@ -73,6 +74,7 @@ import {getLyrics, getMusicUrl} from 'api/player'
 import {SUCC_CODE} from 'api/config'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll'
+import PlayList from 'components/play-list/play-list'
 export default {
     data () {
         return {
@@ -83,12 +85,14 @@ export default {
             currentLyric: null,
             currentLine: 0,
             showFirstMiddle: true,
-            currentLyricText: ''
+            currentLyricText: '',
+            showPlayList: false
         }
     },
     components: {
         ProgressBar,
-        Scroll
+        Scroll,
+        PlayList
     },
     computed: {
         ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList', 'getCurrentMusicUrl']),
@@ -104,6 +108,9 @@ export default {
     },
     methods: {
         ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST', 'SET_CURRENT_MUSIC_URL']),
+        toggleShowPlayList () {
+            this.showPlayList = !this.showPlayList
+        },
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
         },
