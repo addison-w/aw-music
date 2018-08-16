@@ -51,8 +51,8 @@ const actions = {
         commit(types.SET_PLAY_LIST, shuffledList)
         commit(types.SET_CURRENT_INDEX, 0)
     },
-    selectExistedTrack ({commit}, {index}) {
-        commit(types.SET_FULLSCREEN, true)
+    selectExistedTrack ({commit}, {index, fullscreen = true}) {
+        commit(types.SET_FULLSCREEN, fullscreen)
         commit(types.SET_PLAYING, true)
         commit(types.SET_CURRENT_INDEX, index)
     }

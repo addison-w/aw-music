@@ -60,7 +60,7 @@
                 <div class="footer-list-btn" @click.stop="toggleShowPlayList"><i class="material-icons">queue_music</i></div>
             </div>
         </transition>
-        <play-list v-show="showPlayList" @hidePlayList="toggleShowPlayList"></play-list>
+        <play-list ref="playList" v-show="showPlayList" @hidePlayList="toggleShowPlayList"></play-list>
         <audio ref="audio" :src="getCurrentMusicUrl" @timeupdate="updateTime" @playing="updateDuration" @ended="end"></audio>
     </div>
 </template>
@@ -110,6 +110,12 @@ export default {
         ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST', 'SET_CURRENT_MUSIC_URL']),
         toggleShowPlayList () {
             this.showPlayList = !this.showPlayList
+            if (this.showPlayList) {
+                setTimeout(() => {
+                    this.$refs.playList.$refs.scroll.refresh()
+                    this.$refs.playList.$refs.scroll.scrollToElement(this.$refs.playList.$refs.listItem[this.getCurrentIndex])
+                }, 20)
+            }
         },
         toggleFullScreen () {
             this.SET_FULLSCREEN(!this.getFullScreen)
