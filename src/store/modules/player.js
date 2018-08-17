@@ -55,6 +55,27 @@ const actions = {
         commit(types.SET_FULLSCREEN, fullscreen)
         commit(types.SET_PLAYING, true)
         commit(types.SET_CURRENT_INDEX, index)
+    },
+    removeTrack ({commit, state}, {track}) {
+        let playList = state.playList.slice()
+        let sequenceList = state.sequenceList.slice()
+        let currentIndex = state.currentIndex
+        let playListIndex = findTrackIndex(playList, track)
+        playList.splice(playListIndex, 1)
+        let sequenceListIndex = findTrackIndex(sequenceList, track)
+        sequenceList.splice(sequenceListIndex, 1)
+
+        if (currentIndex > playListIndex || currentIndex === playList.length) {
+            currentIndex--
+        }
+
+        commit(types.SET_PLAY_LIST, playList)
+        commit(types.SET_SEQUENCE_LIST, sequenceList)
+        commit(types.SET_CURRENT_INDEX, currentIndex)
+
+        if (!playList.length) {
+            commit(types.SET_PLAYING, false)
+        }
     }
 }
 

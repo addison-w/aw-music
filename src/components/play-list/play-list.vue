@@ -3,12 +3,12 @@
         <div class="play-list-container">
             <scroll class="scroll" ref="scroll" :data="getPlayList">
                 <ul>
-                    <li v-for="track in getPlayList" :key="track.id" 
-                    @click.stop="selectTrack(track)" 
+                    <li v-for="track in getPlayList" :key="track.id"
+                    @click.stop="selectTrack(track)"
                     :class="{'current-playing' : getCurrentTrack.id === track.id }"
                     ref="listItem">
                         <span class="track-name">{{ track.name }} - {{ track.artist }}</span>
-                        <span class="close-icon"><i class="material-icons">close</i></span>
+                        <span class="close-icon" @click.stop="_removeTrack(track)"><i class="material-icons">close</i></span>
                     </li>
                 </ul>
             </scroll>
@@ -30,7 +30,7 @@ export default {
         ...mapGetters(['getPlayList', 'getCurrentTrack'])
     },
     methods: {
-        ...mapActions(['selectExistedTrack']),
+        ...mapActions(['selectExistedTrack', 'removeTrack']),
         hidePlayList () {
             this.$emit('hidePlayList')
         },
@@ -39,6 +39,11 @@ export default {
             this.selectExistedTrack({
                 index: index,
                 fullscreen: false
+            })
+        },
+        _removeTrack (track) {
+            this.removeTrack({
+                track: track
             })
         }
     }
@@ -58,21 +63,20 @@ export default {
             position: absolute;
             width: 100vw;
             background: white;
-            max-height: 300px;
+            max-height: 350px;
             bottom: 0;
             z-index: 180;
             .scroll {
                 position: relative;
-                max-height: 250px;
+                max-height: 300px;
                 overflow: hidden;
                 ul {
                     li {
                         line-height: 25px;
                         padding: 10px 20px;
-                        font-size: 0.8rem;
+                        font-size: 0.9rem;
                         width: 90vw;
                         display: flex;
-                        align-items: center;
                         .track-name {
                             overflow: hidden;
                             white-space: nowrap;
@@ -80,8 +84,7 @@ export default {
                             flex: 1;
                         }
                         .material-icons {
-                            font-size: 20px;
-                            vertical-align: middle;
+                            font-size: 24px;
                         }
                     }
                 }
