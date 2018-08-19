@@ -15,7 +15,8 @@ const state = {
     sequenceList: [],
     currentIndex: -1,
     playMode: playMode.sequence,
-    currentMusicUrl: ''
+    currentMusicUrl: '',
+    favouriteList: JSON.parse(window.localStorage.getItem('favouriteList')) || []
 }
 
 const getters = {
@@ -26,7 +27,8 @@ const getters = {
     getCurrentIndex: state => state.currentIndex,
     getPlayMode: state => state.playMode,
     getCurrentTrack: state => state.playList[state.currentIndex] || {},
-    getCurrentMusicUrl: state => state.currentMusicUrl
+    getCurrentMusicUrl: state => state.currentMusicUrl,
+    getFavouriteList: state => state.favouriteList
 }
 
 const actions = {
@@ -76,6 +78,21 @@ const actions = {
         if (!playList.length) {
             commit(types.SET_PLAYING, false)
         }
+    },
+    toggleFavouriteTrack ({commit, state}, {track}) {
+        let favList = state.favouriteList.slice()
+        let index = favList.length > 0 ? favList.findIndex(fav => fav.id === track.id) : -1
+        if (index > -1) {
+            favList.splice(index, 1)
+        } else {
+            favList.unshift(track)
+        }
+        commit(types.SET_FAVOURITE_LIST, favList)
+        window.localStorage.setItem('favouriteList', JSON.stringify(favList))
+    },
+    clearFavouriteList ({commit}) {
+        commit(types.SET_FAVOURITE_LIST, [])
+        window.localStorage.removeItem('favouriteList')
     }
 }
 
@@ -100,6 +117,9 @@ const mutations = {
     },
     [types.SET_CURRENT_MUSIC_URL] (state, musicUrl) {
         state.currentMusicUrl = musicUrl
+    },
+    [types.SET_FAVOURITE_LIST] (state, favouriteList) {
+        state.favouriteList = favouriteList
     }
 }
 

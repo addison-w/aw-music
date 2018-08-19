@@ -7,6 +7,7 @@ import ArtistDetail from 'components/artist-detail/artist-detail'
 import RankDetail from 'components/rank/rank-detail'
 import TrackList from 'components/recommend/track-list'
 import Search from 'components/search/search'
+import Favourite from 'components/favourite/favourite'
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/search',
       name: 'search',
       component: Search
+    },
+    {
+      path: '/favourite',
+      name: 'favourite',
+      component: Favourite
     }
   ]
 })

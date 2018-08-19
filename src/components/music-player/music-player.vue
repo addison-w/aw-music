@@ -15,7 +15,7 @@
                             <img :class="rotateClass" :src="this.getCurrentTrack.image" alt="">
                         </div>
                     </div>
-                    <div class="first-middle-lyric">
+                    <div class="first-middle-lyric" @click="toggleMiddleScreen">
                         <p v-if="currentLyricText">{{currentLyricText}}</p>
                     </div>
                     <div class="progress-bar-wrap">
@@ -44,7 +44,7 @@
                 <div class="prev-track" @click="prev"><i class="material-icons">skip_previous</i></div>
                 <div class="play-btn" @click="togglePlay"><i class="material-icons">{{playIconToggle}}</i></div>
                 <div class="next-track" @click="next"><i class="material-icons">skip_next</i></div>
-                <div class="fav-toggle"><i class="material-icons">favorite_border</i></div>
+                <div class="fav-toggle" @click="toggleFav"><i class="material-icons">{{favIcon}}</i></div>
             </div>
         </div>
         <transition name="mini">
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgressBar from 'base/progress-bar'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/utils'
@@ -86,6 +86,7 @@ export default {
             currentLine: 0,
             showFirstMiddle: true,
             currentLyricText: '',
+            currentLyricLineNum: 0,
             showPlayList: false
         }
     },
@@ -95,7 +96,7 @@ export default {
         PlayList
     },
     computed: {
-        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList', 'getCurrentMusicUrl']),
+        ...mapGetters(['getPlayList', 'getFullScreen', 'getCurrentTrack', 'getPlaying', 'getCurrentIndex', 'getPlayMode', 'getSequenceList', 'getCurrentMusicUrl', 'getFavouriteList']),
         playIconToggle () {
             return this.getPlaying ? 'pause_circle_outline' : 'play_circle_outline'
         },
@@ -104,10 +105,21 @@ export default {
         },
         playModeIcon () {
             return this.getPlayMode === playMode.sequence ? 'repeat' : this.getPlayMode === playMode.loop ? 'repeat_one' : 'shuffle'
+        },
+        favIcon () {
+            return this.getFavouriteList.includes(this.getCurrentTrack) ? 'favorite' : 'favorite_border'
         }
     },
     methods: {
+        ...mapActions(['toggleFavouriteTrack']),
         ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING', 'SET_CURRENT_INDEX', 'SET_PLAY_MODE', 'SET_PLAY_LIST', 'SET_CURRENT_MUSIC_URL']),
+        toggleFav () {
+            if (this.getCurrentTrack.id) {
+                this.toggleFavouriteTrack({
+                    track: this.getCurrentTrack
+                })
+            }
+        },
         toggleShowPlayList () {
             this.showPlayList = !this.showPlayList
             if (this.showPlayList) {
@@ -223,9 +235,18 @@ export default {
         },
         toggleMiddleScreen () {
             this.showFirstMiddle = !this.showFirstMiddle
-            if (this.currentLyric) {
+            if (this.currentLyric && !this.showFirstMiddle) {
                 this.$nextTick(() => {
                     this.$refs.lyricList.refresh()
+
+                    let lineNum = this.currentLyricLineNum
+                    this.currentLine = lineNum
+                    if (lineNum > 5) {
+                        let lineElement = this.$refs.lyricLine[lineNum - 5]
+                        this.$refs.lyricList.scrollToElement(lineElement, 1000)
+                    } else {
+                        this.$refs.lyricList.scrollTo(0, 0, 1000)
+                    }
                 })
             }
         },
@@ -238,6 +259,7 @@ export default {
                 this.$refs.lyricList.scrollTo(0, 0, 1000)
             }
             this.currentLyricText = txt
+            this.currentLyricLineNum = lineNum
         }
     },
     watch: {
@@ -248,6 +270,7 @@ export default {
             if (this.currentLyric) {
                 this.currentLyric.stop()
                 this.currentLyricText = ''
+                this.currentLyricLineNum = 0
             }
             getMusicUrl(newTrack.id).then(url => {
                 this.SET_CURRENT_MUSIC_URL(url)

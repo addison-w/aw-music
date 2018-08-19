@@ -1,19 +1,13 @@
 <template>
     <div class="m-header">
+        <router-link to="/favourite" tag="div" class="favourite-icon"><i class="material-icons">view_headline</i></router-link>
         <h3 class="header-text">AW-MUSIC</h3>
-        <span class="search-icon" @click="onClickSearch"><i class="material-icons">search</i></span>
+        <router-link to="/search" tag="div" class="search-icon"><i class="material-icons">search</i></router-link>
     </div>
 </template>
 
 <script>
 export default {
-    methods: {
-        onClickSearch () {
-            this.$router.push({
-                path: '/search'
-            })
-        }
-    }
 }
 </script>
 
@@ -25,6 +19,11 @@ export default {
         text-align: center;
         height: 45px;
         border-bottom: 1px solid black;
+        .favourite-icon {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+        }
         .header-text {
             line-height: 45px;
             font-size: 1.3rem;
