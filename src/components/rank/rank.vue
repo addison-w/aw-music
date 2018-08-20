@@ -3,7 +3,7 @@
         <scroll :data="rankList" class="rank-content" ref="scroll">
             <div>
                 <div class="rank-row" v-for="rank in rankList" :key="rank.id" @click="selectRank(rank)">
-                    <img :src="rank.coverImgUrl" alt="">
+                    <img v-lazy="rank.coverImgUrl" alt="">
                     <ul>
                         <li v-for="(track, index) in rank.tracks.slice(0 , 3)" :key="track.id">
                             <span>{{++index}}. {{track.name}} - {{track.ar.map(a => a.name).join("/")}}</span>
@@ -70,6 +70,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../common/scss/variable.scss';
     .rank-wrap {
         width: 100%;
         display: flex;
@@ -85,7 +86,9 @@ export default {
                 flex-direction: row;
                 align-items: center;
                 padding: 5px 10px;
-                border-bottom: 1px solid lightgray;
+                margin: 10px;
+                border-radius: 5px;
+                box-shadow: $box-shadow-black;
                 img {
                     width: 100px;
                     height: 100px;

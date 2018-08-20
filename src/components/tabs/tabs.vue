@@ -19,6 +19,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/scss/variable.scss';
     .m-tabs {
         display: flex;
         justify-content: space-around;
@@ -26,10 +27,10 @@ export default {
         line-height: 45px;
         a {
             text-decoration: none !important;
-            color: black;
+            color: $color-primary;
         }
         .router-link-active {
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid $color-secondary;
         }
     }
 </style>

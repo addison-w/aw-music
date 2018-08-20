@@ -1,6 +1,6 @@
 <template>
     <div :class="cname" @click="selectTrackList">
-        <img :src="songList.imgUrl" alt="">
+        <img v-lazy="songList.imgUrl" alt="">
         <p>{{ songList.name }}</p>
     </div>
 </template>

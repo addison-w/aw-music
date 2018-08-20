@@ -5,7 +5,7 @@
                 <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
                     <div class="grouped-flag">{{ grouped.flag }}</div>
                     <div @click="selectArtist(artist)" v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
-                        <img :src="artist.imgUrl" alt="">
+                        <img v-lazy="artist.imgUrl" alt="">
                         <span>{{ artist.name }}</span>
                     </div>
                 </div>

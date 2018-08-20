@@ -12,13 +12,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/scss/variable.scss';
     .m-header {
         position: relative;
         left:0;
         top: 0;
         text-align: center;
         height: 45px;
-        border-bottom: 1px solid black;
         .favourite-icon {
             position: absolute;
             left: 10px;

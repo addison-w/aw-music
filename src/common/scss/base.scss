@@ -1,3 +1,6 @@
+@import 'variable.scss';
 html {
     font-family: 'Roboto', sans-serif;
+    background: $color-background;
+    color: $color-primary;
 }
