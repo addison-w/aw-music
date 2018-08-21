@@ -1,28 +1,30 @@
 <template>
-    <div class="artist-wrap" ref="artistList">
-        <scroll ref="scroll" class="artist-content" :data="artistList" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
-            <div>
-                <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
-                    <div class="grouped-flag">{{ grouped.flag }}</div>
-                    <div @click="selectArtist(artist)" v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
-                        <img v-lazy="artist.imgUrl" alt="">
-                        <span>{{ artist.name }}</span>
+    <transition name="fade">
+        <div class="artist-wrap" ref="artistList">
+            <scroll ref="scroll" class="artist-content" :data="artistList" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
+                <div>
+                    <div v-for="(grouped, index) in artistList" :key="index" ref="groupedList">
+                        <div class="grouped-flag">{{ grouped.flag }}</div>
+                        <div @click="selectArtist(artist)" v-for="artist in grouped.artists" :key="artist.id" class="artist-row">
+                            <img v-lazy="artist.imgUrl" alt="">
+                            <span>{{ artist.name }}</span>
+                        </div>
                     </div>
+                    <loading v-show="!artistList.length > 0"></loading>
                 </div>
-                <loading v-show="!artistList.length > 0"></loading>
-            </div>
-            <div class="index-list">
-                <ul>
-                    <li v-for="(letter, index) in indexList" :key="letter" :data-index="index"
-                        @touchstart="onIndexStart" @touchmove.stop.prevent="onIndexMove"
-                        :class="{'current': currentIndex === index}">
-                        {{ letter }}
-                    </li>
-                </ul>
-            </div>
-        </scroll>
-        <router-view></router-view>
-    </div>
+                <div class="index-list">
+                    <ul>
+                        <li v-for="(letter, index) in indexList" :key="letter" :data-index="index"
+                            @touchstart="onIndexStart" @touchmove.stop.prevent="onIndexMove"
+                            :class="{'current': currentIndex === index}">
+                            {{ letter }}
+                        </li>
+                    </ul>
+                </div>
+            </scroll>
+            <router-view></router-view>
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -122,7 +124,7 @@ export default {
 
                     this.artistList.unshift({
                         flag: '热',
-                        artists: [...fullList.slice(0, 8)]
+                        artists: [...fullList.slice(1, 10)]
                     })
 
                     this.artistList.map(a => this.indexList.push(a.flag))
@@ -155,11 +157,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
     .artist-wrap {
         display: flex;
         flex-direction: column;
         position: fixed;
-        top: 90px;
+        top: 105px;
         bottom: 0;
         width: 100%;
         .artist-content {

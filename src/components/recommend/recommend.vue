@@ -1,15 +1,17 @@
 <template>
-    <div class="recommend-wrap" ref="recommend">
-        <scroll ref="scroll" class="recommend-content" :data="recommendSongLists">
-            <div class="content">
-                <swiper v-if="recommendSlides.length" :items="recommendSlides" :cname="swiperClass"></swiper>
-                <loading v-show="!recommendSlides.length"></loading>
-                <p class="sub-heading-text">推荐歌单</p>
-                <RecommendSongList :recommendSongLists="recommendSongLists" @select="selectTrackList"></RecommendSongList>
-            </div>
-        </scroll>
-        <router-view></router-view>
-    </div>
+    <transition name="fade">
+        <div class="recommend-wrap" ref="recommend">
+            <scroll ref="scroll" class="recommend-content" :data="recommendSongLists">
+                <div class="content">
+                    <swiper v-if="recommendSlides.length" :items="recommendSlides" :cname="swiperClass"></swiper>
+                    <loading v-show="!recommendSlides.length"></loading>
+                    <p class="sub-heading-text">推荐歌单</p>
+                    <RecommendSongList :recommendSongLists="recommendSongLists" @select="selectTrackList"></RecommendSongList>
+                </div>
+            </scroll>
+            <router-view></router-view>
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -95,11 +97,18 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../common/scss/variable.scss';
+@import 'common/scss/variable.scss';
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
 .recommend-wrap {
     position: fixed;
     width: 100%;
-    top: 90px;
+    top: 105px;
     bottom: 0;
     .recommend-content {
         height: 100%;

@@ -1,6 +1,7 @@
 @import 'variable.scss';
+@import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
 html {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Noto Sans TC', sans-serif;
     background: $color-background;
     color: $color-primary;
 }

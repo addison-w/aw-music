@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../common/scss/variable.scss';
+@import 'common/scss/variable.scss';
 .recommenSongList {
     display: flex;
     flex-wrap: wrap;
@@ -43,7 +43,7 @@ export default {
         flex-basis: 30%;
         margin-bottom: 0.5rem;
         border-radius: 4px;
-        box-shadow: $box-shadow-black;
+        border: 1px solid $color-gray;
         img {
             border-top-left-radius: 4px;
             border-top-right-radius: 4px;
@@ -51,7 +51,7 @@ export default {
         }
         p {
             padding: 1px;
-            line-height: 1.2rem;
+            line-height: 1.1rem;
             font-size: 0.75rem;
         }
     }

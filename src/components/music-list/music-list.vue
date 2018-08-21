@@ -102,20 +102,21 @@ export default {
     watch: {
         scrollY (newY) {
             let scrollPercent = -(newY / this.imgHeight)
-            this.$refs.nav.style.background = `rgba(38, 38, 38, ${scrollPercent})`
+            this.$refs.nav.style.background = `rgba(38, 38, 38, ${Math.min(0.5,scrollPercent)})`
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .music-list-wrap {
         position: fixed;
         top: 0;
         bottom: 0;
         width: 100vw;
         z-index: 100;
-        background: white;
+        background: $color-background;
         .nav {
             z-index: 120;
             position: fixed;
@@ -123,7 +124,7 @@ export default {
             width: 100vw;
             line-height: 45px;
             text-align: center;
-            color: white;
+            color: $color-gray;
             .nav-left {
                 z-index: 120;
                 position: absolute;
@@ -163,7 +164,7 @@ export default {
                 .randomRow {
                     width: 100vw;
                     height: 50px;
-                    border-bottom: 1px solid #F0F0F0;
+                    border-bottom: 1px solid $color-gray;
                     line-height: 50px;
                     span {
                         padding: 0 25px;
@@ -171,6 +172,7 @@ export default {
                             vertical-align: middle !important;
                             font-size: 25px;
                             padding-right: 10px;
+                            color: $color-secondary;
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {BASE_URL} from './config'
 
-const Ids = [0, 1, 2, 3, 4, 5, 10, 11]
+const Ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 function _getRankList (listId) {
     return axios.get(`${BASE_URL}/top/list?idx=${listId}`)

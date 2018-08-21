@@ -29,6 +29,7 @@
                     </div>
                 </scroll>
             </div>
+            <modal ref="modal" @selectOption="selectOption" content="确定清空收藏列表？"></modal>
         </div>
     </transition>
 </template>
@@ -37,10 +38,17 @@
 import {mapGetters, mapActions} from 'vuex'
 import Scroll from 'base/scroll'
 import {playListMixin} from 'common/js/mixin'
+import Modal from 'base/modal'
 export default {
     mixins: [playListMixin],
+    data () {
+        return {
+            modalOption: false
+        }
+    },
     components: {
-        Scroll
+        Scroll,
+        Modal
     },
     computed: {
         ...mapGetters(['getFavouriteList', 'getPlayList'])
@@ -74,16 +82,23 @@ export default {
             })
         },
         clearFavList () {
-            this.clearFavouriteList()
+            this.$refs.modal.show()
         },
         goBack () {
             this.$router.go(-1)
+        },
+        selectOption (option) {
+            if (option) {
+                this.clearFavouriteList()
+            }
+            this.$refs.modal.hide()
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .slide-enter-active, .slide-leave-active {
         transition: all 0.3s
     }
@@ -97,14 +112,14 @@ export default {
         right: 0;
         bottom: 0;
         z-index: 110;
-        background: white;
+        background: $color-background;
         nav {
             position: absolute;
             height: 45px;
             line-height: 45px;
             width: 100vw;
             text-align:center;
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid $color-gray;
             .nav-left {
                 position: absolute;
                 left: 20px;
@@ -137,6 +152,7 @@ export default {
                     .bin {
                         padding-right: 5px;
                         float: right;
+                        color: $color-secondary;
                     }
                 }
                 ul {
@@ -176,6 +192,7 @@ export default {
                         }
                         .remove-icon {
                             flex-basis: 40px;
+                            color: $color-secondary;
                         }
                     }
                 }

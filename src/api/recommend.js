@@ -30,3 +30,13 @@ export function getTrackListById (id) {
         .catch(err => reject(err))
     })
 }
+
+export function getAlbumById (id) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${BASE_URL}/album?id=${id}`)
+        .then(res => {
+            resolve(res.data)
+        })
+        .catch(err => reject(err))
+    })
+}

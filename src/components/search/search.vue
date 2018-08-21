@@ -82,6 +82,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .slide-enter-active, .slide-leave-active {
         transition: all 0.3s;
     }
@@ -95,6 +96,6 @@ export default {
         right: 0;
         bottom: 0;
         z-index: 110;
-        background: white;
+        background: $color-background;
     }
 </style>

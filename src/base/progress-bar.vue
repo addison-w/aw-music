@@ -73,17 +73,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .bar-container {
         height: 30px;
         .inner-bar {
             position: relative;
             top: 13px;
             height: 4px;
-            background: black;
+            background: $color-background;
             .progress {
                 position: absolute;
                 height: 100%;
-                background: #d44439;
+                background: $color-secondary;
             }
             .btn-wrapper {
                 position: absolute;
@@ -98,9 +99,9 @@ export default {
                     box-sizing: border-box;
                     width: 16px;
                     height: 16px;
-                    border: 3px solid gray;
+                    border: 3px solid $color-background;
                     border-radius: 50%;
-                    background: #d44439;
+                    background: $color-secondary;
                 }
             }
         }

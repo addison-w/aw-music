@@ -1,20 +1,22 @@
 <template>
-    <div class="rank-wrap" ref="rank">
-        <scroll :data="rankList" class="rank-content" ref="scroll">
-            <div>
-                <div class="rank-row" v-for="rank in rankList" :key="rank.id" @click="selectRank(rank)">
-                    <img v-lazy="rank.coverImgUrl" alt="">
-                    <ul>
-                        <li v-for="(track, index) in rank.tracks.slice(0 , 3)" :key="track.id">
-                            <span>{{++index}}. {{track.name}} - {{track.ar.map(a => a.name).join("/")}}</span>
-                        </li>
-                    </ul>
+    <transition name="fade">
+        <div class="rank-wrap" ref="rank">
+            <scroll :data="rankList" class="rank-content" ref="scroll">
+                <div>
+                    <div class="rank-row" v-for="rank in rankList" :key="rank.id" @click="selectRank(rank)">
+                        <img v-lazy="rank.coverImgUrl" alt="">
+                        <ul>
+                            <li v-for="(track, index) in rank.tracks.slice(0 , 3)" :key="track.id">
+                                <span>{{++index}}. {{track.name}} - {{track.ar.map(a => a.name).join("/")}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <loading v-show="!rankList.length"></loading>
                 </div>
-                <loading v-show="!rankList.length"></loading>
-            </div>
-        </scroll>
-        <router-view></router-view>
-    </div>
+            </scroll>
+            <router-view></router-view>
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -71,12 +73,18 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../common/scss/variable.scss';
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
     .rank-wrap {
         width: 100%;
         display: flex;
         flex-direction: column;
         position: fixed;
-        top: 90px;
+        top: 105px;
         bottom: 0;
         .rank-content{
             height: 100%;
@@ -86,9 +94,7 @@ export default {
                 flex-direction: row;
                 align-items: center;
                 padding: 5px 10px;
-                margin: 10px;
-                border-radius: 5px;
-                box-shadow: $box-shadow-black;
+                border-bottom: 1px solid $color-gray;
                 img {
                     width: 100px;
                     height: 100px;

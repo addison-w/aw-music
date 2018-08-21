@@ -51,6 +51,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .play-list-wrap {
         position: fixed;
         top: 0;
@@ -85,11 +86,12 @@ export default {
                         }
                         .material-icons {
                             font-size: 24px;
+                            color: $color-secondary;
                         }
                     }
                 }
                 .current-playing {
-                    color: #d44439;
+                    color: $color-secondary;
                 }
             }
             .play-list-bottom {
@@ -100,8 +102,8 @@ export default {
                 width: 100vw;
                 line-height: 50px;
                 text-align: center;
-                background: white;
-                border-top: 1px solid #F0F0F0;
+                background: $color-background;
+                border-top: 1px solid $color-gray;
             }
         }
     }

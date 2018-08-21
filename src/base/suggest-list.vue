@@ -100,6 +100,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .suggest-list-wrap {
         position: fixed;
         top: 60px;
@@ -111,13 +112,13 @@ export default {
             .suggest-title {
                 font-size: 0.7rem;
                 padding: 10px 10px;
-                color: gray;
+                color: $color-secondary;
             }
             .suggest-list {
                 display: flex;
                 flex-flow: column nowrap;
                 .list-row {
-                    border-bottom: 1px solid #F0F0F0;
+                    border-bottom: 1px solid $color-gray;
                     padding: 10px 20px;
                     line-height: 20px;
                     .track-name {

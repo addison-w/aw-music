@@ -38,13 +38,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .popular-search-wrap {
         margin: 0 auto;
         width: 95vw;
         .pop-search-title {
             font-size: 0.7rem;
             padding: 10px 10px;
-            color: gray;
+            color: $color-secondary;
         }
         .pop-search-list {
             display: flex;

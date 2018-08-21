@@ -19,18 +19,23 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../common/scss/variable.scss';
+@import 'common/scss/variable.scss';
     .m-tabs {
         display: flex;
         justify-content: space-around;
-        height: 45px;
-        line-height: 45px;
+        height: 60px;
+        line-height: 60px;
         a {
             text-decoration: none !important;
             color: $color-primary;
         }
         .router-link-active {
-            border-bottom: 1px solid $color-secondary;
+            border-bottom: 2px solid $color-secondary;
+            padding: 3px 15px;
+            // background: $color-secondary;
+            // color: $color-background;
+            // padding: 5px 15px;
+            // border-radius: 6px;
         }
     }
 </style>

@@ -1,6 +1,9 @@
 <template>
     <div class="music-player-wrap" v-show="getPlayList.length > 0">
         <div class="main-player" v-show="getFullScreen">
+            <div class="background">
+                <img width="100%" height="100%" :src="this.getCurrentTrack.image">
+            </div>
             <div class="top">
                 <div class="down-arrow" @click="toggleFullScreen"><i class="material-icons">expand_more</i></div>
                 <div class="header-info">
@@ -145,9 +148,6 @@ export default {
         },
         togglePlay () {
             this.SET_PLAYING(!this.getPlaying)
-            if (this.currentLyric) {
-                this.currentLyric.togglePlay()
-            }
         },
         next () {
             if (this.getPlayList.length === 1) {
@@ -188,12 +188,12 @@ export default {
         },
         updateDuration (e) {
             this.duration = e.target.duration
-            if (this.currentLyric && e.target.currentTime === 0) {
-                this.currentLyric.play()
-            }
         },
         updateTime (e) {
             this.currentTime = e.target.currentTime
+            if (this.currentLyric) {
+                this.getPlaying ? this.currentLyric.seek(e.target.currentTime * 1000) : this.currentLyric.stop()
+            }
         },
         formatTime (interval) {
             interval = interval | 0
@@ -267,11 +267,15 @@ export default {
             if (newTrack.id === oldTrack.id) {
                 return
             }
+            this.SET_PLAYING(false)
             if (this.currentLyric) {
                 this.currentLyric.stop()
                 this.currentLyricText = ''
                 this.currentLyricLineNum = 0
+                this.currentLine = 0
+                this.currentLyric = null
             }
+
             getMusicUrl(newTrack.id).then(url => {
                 this.SET_CURRENT_MUSIC_URL(url)
                 this.$nextTick(() => {
@@ -286,8 +290,7 @@ export default {
                         }
                     })
                     this.SET_PLAYING(true)
-                    let audio = this.$refs.audio
-                    audio.play()
+                    this.$refs.audio.play()
                 })
             })
             .catch(err => console.log(err))
@@ -296,7 +299,7 @@ export default {
             this.$nextTick(() => {
                 let audio = this.$refs.audio
                 newPlaying ? audio.play() : audio.pause()
-                this.rotateClass = newPlaying ? 'play' : 'play pause'
+                this.rotateClass = newPlaying ? 'play' : ''
             })
         }
     }
@@ -304,14 +307,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .main-player {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: white;
+        background: gray;
+        color: $color-gray;
         z-index: 150;
+        .background {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(20px);
+        }
         .top {
             position: fixed;
             height: 50px;
@@ -326,6 +341,7 @@ export default {
                 padding: 0 20px;
                 i {
                     vertical-align: middle;
+                    font-size: 30px;
                 }
             }
             .header-info {
@@ -338,7 +354,7 @@ export default {
                 .header-artist-name {
                     line-height: 12px;
                     font-size: 0.8rem;
-                    color: lightgray;
+                    color: $color-gray;
                 }
             }
         }
@@ -355,19 +371,14 @@ export default {
                 left: 50%;
                 transform: translate(-50%, -70%);
                 .cd {
-                    width: 75vw;
-                    height: 75vw;
-                    border: 12px solid lightgray;
-                    border-radius: 50%;
-                    overflow: hidden;
                     img {
-                        width: 100%;
-                        height: 100%;
+                        width: 75vw;
+                        height: 75vw;
+                        border: 10px solid $color-gray;
+                        border-radius: 50%;
+                        overflow: hidden;
                         &.play {
-                            animation: rotate 10s linear infinite
-                        }
-                        &.pause {
-                            animation-play-state: paused
+                            animation: rotate 20s linear infinite;
                         }
                     }
                 }
@@ -381,12 +392,13 @@ export default {
             .lyric-wrap {
                 height: 100%;
                 overflow: hidden;
+                color: $color-gray;
                 p {
                     line-height: 50px;
                     text-align: center;
                 }
                 p.current-line {
-                    color: #d44439;
+                    color: $color-secondary;
                 }
             }
         }
@@ -438,6 +450,9 @@ export default {
                     font-size: 60px;
                 }
             }
+            .fav-toggle {
+                color: $color-secondary;
+            }
         }
     }
     .mini-player {
@@ -445,7 +460,8 @@ export default {
         height: 60px;
         width: 100vw;
         bottom: 0;
-        background: #F0F0F0;
+        background: $color-background;
+        border-top: 1px solid $color-gray;
         display: flex;
         align-items: center;
         z-index: 150;
@@ -457,18 +473,14 @@ export default {
             opacity: 0;
         }
         .mini-cd {
-            margin: 0 20px;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            overflow: hidden;
             img {
-                width: 100%;
+                margin: 0 20px;
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                overflow: hidden;
                 &.play {
-                    animation: rotate 10s linear infinite
-                }
-                &.pause {
-                    animation-play-state: paused
+                    animation: rotate 20s linear infinite;
                 }
             }
         }

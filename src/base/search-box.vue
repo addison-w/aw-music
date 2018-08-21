@@ -44,6 +44,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'common/scss/variable.scss';
     .search-bar-wrap {
         display: flex;
         line-height: 40px;
@@ -53,6 +54,7 @@ export default {
             padding: 0 10px;
             i {
                 vertical-align: middle;
+                font-size: 30px;
             }
         }
         .search-input {
@@ -71,6 +73,7 @@ export default {
             padding: 0 10px;
             i {
                 vertical-align: middle;
+                color: $color-secondary;
             }
         }
     }

@@ -1,15 +1,55 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Recommend from 'components/recommend/recommend'
-import Rank from 'components/rank/rank'
-import Artist from 'components/artist/artist'
-import ArtistDetail from 'components/artist-detail/artist-detail'
-import RankDetail from 'components/rank/rank-detail'
-import TrackList from 'components/recommend/track-list'
-import Search from 'components/search/search'
-import Favourite from 'components/favourite/favourite'
 
 Vue.use(Router)
+
+const Recommend = (resolve) => {
+  import('components/recommend/recommend').then((module) => {
+    resolve(module)
+  })
+}
+
+const Rank = (resolve) => {
+  import('components/rank/rank').then((module) => {
+    resolve(module)
+  })
+}
+
+const Artist = (resolve) => {
+  import('components/artist/artist').then((module) => {
+    resolve(module)
+  })
+}
+
+const ArtistDetail = (resolve) => {
+  import('components/artist-detail/artist-detail').then((module) => {
+    resolve(module)
+  })
+}
+
+const RankDetail = (resolve) => {
+  import('components/rank/rank-detail').then((module) => {
+    resolve(module)
+  })
+}
+
+const TrackList = (resolve) => {
+  import('components/recommend/track-list').then((module) => {
+    resolve(module)
+  })
+}
+
+const Search = (resolve) => {
+  import('components/search/search').then((module) => {
+    resolve(module)
+  })
+}
+
+const Favourite = (resolve) => {
+  import('components/favourite/favourite').then((module) => {
+    resolve(module)
+  })
+}
 
 export default new Router({
   routes: [
