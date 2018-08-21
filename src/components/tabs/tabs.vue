@@ -23,15 +23,14 @@ export default {
     .m-tabs {
         display: flex;
         justify-content: space-around;
-        height: 60px;
-        line-height: 60px;
+        height: 55px;
+        line-height: 55px;
         a {
             text-decoration: none !important;
             color: $color-primary;
         }
         .router-link-active {
             border-bottom: 2px solid $color-secondary;
-            padding: 3px 15px;
         }
     }
 </style>

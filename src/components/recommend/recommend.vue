@@ -108,7 +108,7 @@ export default {
 .recommend-wrap {
     position: fixed;
     width: 100%;
-    top: 105px;
+    top: 100px;
     bottom: 0;
     .recommend-content {
         height: 100%;

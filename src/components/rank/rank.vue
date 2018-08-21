@@ -84,7 +84,7 @@ export default {
         display: flex;
         flex-direction: column;
         position: fixed;
-        top: 105px;
+        top: 100px;
         bottom: 0;
         .rank-content{
             height: 100%;
