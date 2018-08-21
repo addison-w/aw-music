@@ -43,10 +43,8 @@ export default {
         flex-basis: 30%;
         margin-bottom: 0.5rem;
         border-radius: 4px;
-        border: 1px solid $color-gray;
         img {
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
+            border-radius: 4px;
             width: 100%;
         }
         p {

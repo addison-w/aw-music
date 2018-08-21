@@ -16,18 +16,18 @@ module.exports = {
         'api': resolve('src/api'),
         'model': resolve('src/model')
       }
-    },
-    module: {
-      rules: [
-        {
-          test: /\.scss$/,
-          use: [
-            'vue-style-loader',
-            'css-loader',
-            'sass-loader'
-          ]
-        }
-      ]
     }
+    // module: {
+    //   rules: [
+    //     {
+    //       test: /\.scss$/,
+    //       use: [
+    //         'vue-style-loader',
+    //         'css-loader',
+    //         'sass-loader'
+    //       ]
+    //     }
+    //   ]
+    // }
   }
 }

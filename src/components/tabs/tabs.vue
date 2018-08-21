@@ -32,10 +32,6 @@ export default {
         .router-link-active {
             border-bottom: 2px solid $color-secondary;
             padding: 3px 15px;
-            // background: $color-secondary;
-            // color: $color-background;
-            // padding: 5px 15px;
-            // border-radius: 6px;
         }
     }
 </style>

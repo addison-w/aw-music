@@ -102,7 +102,7 @@ export default {
     watch: {
         scrollY (newY) {
             let scrollPercent = -(newY / this.imgHeight)
-            this.$refs.nav.style.background = `rgba(38, 38, 38, ${Math.min(0.5,scrollPercent)})`
+            this.$refs.nav.style.background = `rgba(38, 38, 38, ${Math.min(0.5, scrollPercent)})`
         }
     }
 }
