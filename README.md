@@ -31,25 +31,20 @@ Demo: [m.addisonwen.com](http://m.addisonwen.com)
 ### Mockup
 <img src="./screenshots/aw-music-mockup.jpg">
 
-### Recommend | Rank
-<img src="./screenshots/1.png" width="30%">
-<img src="./screenshots/2.png" width="30%">
+### Recommend 推荐页面 | Rank 排行页面
+<img src="./screenshots/1.png" width="30%"><img src="./screenshots/2.png" width="30%">
 
-### Artists | Artist Detail
-<img src="./screenshots/3.png" width="30%">
-<img src="./screenshots/4.png" width="30%">
+### Artists 歌手页面 | Artist Detail 歌手详情
+<img src="./screenshots/3.png" width="30%"><img src="./screenshots/4.png" width="30%">
 
-### Player CD | Player Lyrics
-<img src="./screenshots/5.png" width="30%">
-<img src="./screenshots/6.png" width="30%">
+### Player CD 播放器 | Player Lyrics 歌词
+<img src="./screenshots/5.png" width="30%"><img src="./screenshots/6.png" width="30%">
 
-### Music List
+### Music List 歌单页面
 <img src="./screenshots/7.png" width="30%">
 
-### Search | Search Result
-<img src="./screenshots/8.png" width="30%">
-<img src="./screenshots/9.png" width="30%">
+### Search 搜索页面 | Search Result 搜索结果
+<img src="./screenshots/8.png" width="30%"><img src="./screenshots/9.png" width="30%">
 
-### Current Play List | Favourite Song List
-<img src="./screenshots/10.png" width="30%">
-<img src="./screenshots/11.png" width="30%">
+### Current Play List 当前播放列表 | Favourite Song List 收藏页面
+<img src="./screenshots/10.png" width="30%"><img src="./screenshots/11.png" width="30%">
