@@ -1,10 +1,12 @@
-# Vue - Cloud Music Web App
+# Vue - AW-MUSIC 网易云 Cloud Music Web App
 
 Demo: [m.addisonwen.com](http://m.addisonwen.com)
 
 *View demo on mobile device or chrome mobile device mode. Refresh the page if page is unscrollable*
 
-## Frontend
+*使用移动设备或Chrome移动设备模式访问Demo， 如无法滚动请刷新页面*
+
+## Frontend / 前端
 * Vue 2.5.16
 * Vue-Router
 * Vuex
@@ -15,38 +17,39 @@ Demo: [m.addisonwen.com](http://m.addisonwen.com)
 * SCSS + Flex layout
 * Material Icons
 
-## Backend
+## Backend / 后端
 * Node.js + Express
 * Axios
 * NeteaseCloudMusicApi
 
-## Tools
+## Tools / 工具
 * Vue-Cli 3
 * Eslint
 * Fastclick
 
-## Screenshots
-*Mockup*
-![Mockup](./screenshots/aw-music-mockup.jpg)
-*Recommend*
-![Recommend](./screenshots/1.png)
-*Rank*
-![Rank](./screenshots/2.png)
-*Artists*
-![Artists](./screenshots/3.png)
-*Artist*
-![Artist](./screenshots/4.png)
-*Player CD*
-![Player CD](./screenshots/5.png)
-*Player Lyrics*
-![Player Lyrics](./screenshots/6.png)
-*Music List*
-![Music List](./screenshots/7.png)
-*Search*
-![Search](./screenshots/8.png)
-*Search Result*
-![Search Result](./screenshots/9.png)
-*Play List*
-![Play List](./screenshots/10.png)
-*Favourite List*
-![Favourite List](./screenshots/11.png)
+## Screenshots / 项目截图
+### Mockup
+<img src="./screenshots/aw-music-mockup.jpg">
+
+### Recommend | Rank
+<img src="./screenshots/1.png" width="45%">
+<img src="./screenshots/2.png" width="45%">
+
+### Artists | Artist Detail
+<img src="./screenshots/3.png" width="45%">
+<img src="./screenshots/4.png" width="45%">
+
+### Player CD | Player Lyrics
+<img src="./screenshots/5.png" width="45%">
+<img src="./screenshots/6.png" width="45%">
+
+### Music List
+<img src="./screenshots/7.png" width="45%">
+
+### Search | Search Result
+<img src="./screenshots/8.png" width="45%">
+<img src="./screenshots/9.png" width="45%">
+
+### Current Play List | Favourite Song List
+<img src="./screenshots/10.png" width="45%">
+<img src="./screenshots/11.png" width="45%">
