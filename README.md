@@ -6,6 +6,16 @@ Demo: [m.addisonwen.com](http://m.addisonwen.com)
 
 *使用移动设备或Chrome移动设备模式访问Demo， 如无法滚动请刷新页面*
 
+## Features
+* Browse and play tracks in recommend or music rank playlist.
+* Search Artists / Songs by name.
+* Brose artists with index scrolling
+* Support 3 play modes (Sequence, Loop, Random)
+* Song lyrics supported
+* Minimal design UI built with SASS + Flex layout.
+* Mark favourite songs and storage them in local storage.
+
+
 ## Frontend / 前端
 * Vue 2.5.16
 * Vue-Router
